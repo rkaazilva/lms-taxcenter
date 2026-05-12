@@ -1,0 +1,7 @@
+Options -MultiViews -Indexes
+
+RewriteEngine On
+
+# Redirect semua request ke folder /public (solusi Laravel di shared hosting)
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ /public/$1 [L,QSA]
