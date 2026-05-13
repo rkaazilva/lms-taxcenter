@@ -297,6 +297,7 @@
                 <a href="#tentang" class="nav-link">Tentang</a>
                 <a href="#program" class="nav-link">Program</a>
                 <a href="#jadwal" class="nav-link">Jadwal</a>
+                <a href="{{ route('artikel.index') }}" class="nav-link">Artikel</a>
                 <button onclick="toggleModal('loginModal')"
                    class="text-[13px] font-semibold text-gold border border-gold/40 px-5 py-2 rounded-full hover:bg-gold hover:text-navy transition-all duration-300">
                     Masuk ke LMS
@@ -320,6 +321,7 @@
             <a href="#tentang" class="block text-white/80 text-sm font-medium py-2 px-1" onclick="toggleMobileMenu()">Tentang</a>
             <a href="#program" class="block text-white/80 text-sm font-medium py-2 px-1" onclick="toggleMobileMenu()">Program</a>
             <a href="#jadwal" class="block text-white/80 text-sm font-medium py-2 px-1" onclick="toggleMobileMenu()">Jadwal</a>
+            <a href="{{ route('artikel.index') }}" class="block text-white/80 text-sm font-medium py-2 px-1">Artikel</a>
             <div class="flex gap-3 pt-3">
                 <button onclick="toggleModal('loginModal')"
                    class="flex-1 text-center text-[12px] font-semibold text-gold border border-gold/40 px-4 py-2.5 rounded-full hover:bg-gold hover:text-navy transition">
