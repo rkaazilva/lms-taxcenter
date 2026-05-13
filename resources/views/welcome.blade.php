@@ -296,7 +296,6 @@
                 <a href="#beranda" class="nav-link">Beranda</a>
                 <a href="#tentang" class="nav-link">Tentang</a>
                 <a href="#program" class="nav-link">Program</a>
-                <a href="#jadwal" class="nav-link">Jadwal</a>
                 <a href="{{ route('artikel.index') }}" class="nav-link">Artikel</a>
                 <button onclick="toggleModal('loginModal')"
                    class="text-[13px] font-semibold text-gold border border-gold/40 px-5 py-2 rounded-full hover:bg-gold hover:text-navy transition-all duration-300">
@@ -320,7 +319,6 @@
             <a href="#beranda" class="block text-white/80 text-sm font-medium py-2 px-1" onclick="toggleMobileMenu()">Beranda</a>
             <a href="#tentang" class="block text-white/80 text-sm font-medium py-2 px-1" onclick="toggleMobileMenu()">Tentang</a>
             <a href="#program" class="block text-white/80 text-sm font-medium py-2 px-1" onclick="toggleMobileMenu()">Program</a>
-            <a href="#jadwal" class="block text-white/80 text-sm font-medium py-2 px-1" onclick="toggleMobileMenu()">Jadwal</a>
             <a href="{{ route('artikel.index') }}" class="block text-white/80 text-sm font-medium py-2 px-1">Artikel</a>
             <div class="flex gap-3 pt-3">
                 <button onclick="toggleModal('loginModal')"
@@ -1005,7 +1003,6 @@
                     <a href="#beranda" class="footer-link block">Beranda</a>
                     <a href="#tentang" class="footer-link block">Tentang Kami</a>
                     <a href="#program" class="footer-link block">Program</a>
-                    <a href="#jadwal" class="footer-link block">Jadwal Kelas</a>
                     <a href="https://forms.gle/bcJJc1rbRRR8y6vX6" target="_blank" class="footer-link block">Daftar Member</a>
                 </div>
             </div>
