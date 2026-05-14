@@ -55,21 +55,76 @@
             border-bottom: 1px solid rgba(255, 187, 0, 0.15);
         }
 
-        /* HERO */
-        .hero-bg {
-            background-image: url("{{ asset('images/kampus-aerial.png') }}");
-            background-size: cover;
-            background-position: center 30%;
-            background-attachment: fixed;
+        /* DYNAMIC SHADER-LIKE BACKGROUND */
+        .hero-dynamic-bg {
+            position: absolute;
+            inset: 0;
+            background-color: #050a15;
+            overflow: hidden;
+            z-index: 0;
         }
-        .hero-overlay {
-            background: linear-gradient(
-                135deg,
-                rgba(15, 31, 61, 0.93) 0%,
-                rgba(26, 51, 101, 0.88) 40%,
-                rgba(26, 51, 101, 0.75) 70%,
-                rgba(15, 31, 61, 0.92) 100%
-            );
+        .mouse-spotlight {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,187,0,0.12), transparent 40%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .mouse-spotlight-2 {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(600px circle at calc(100% - var(--mouse-x, 50%)) calc(100% - var(--mouse-y, 50%)), rgba(6,182,212,0.08), transparent 40%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .hero-blob {
+            position: absolute;
+            filter: blur(90px);
+            opacity: 0.7;
+            animation: float-blob 20s infinite alternate ease-in-out;
+            border-radius: 50%;
+        }
+        .blob-1 {
+            top: -10%; left: -10%;
+            width: 50vw; height: 50vw;
+            background: #1A3365;
+            animation-delay: 0s;
+        }
+        .blob-2 {
+            bottom: -20%; right: -10%;
+            width: 60vw; height: 60vw;
+            background: #0f1f3d;
+            animation-delay: -5s;
+        }
+        .blob-3 {
+            top: 20%; left: 30%;
+            width: 45vw; height: 45vw;
+            background: rgba(255, 187, 0, 0.15);
+            animation-delay: -10s;
+        }
+        .blob-4 {
+            bottom: 10%; left: 20%;
+            width: 40vw; height: 40vw;
+            background: rgba(6, 182, 212, 0.15);
+            animation-delay: -15s;
+        }
+        @keyframes float-blob {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(8vw, 8vh) scale(1.1); }
+            66% { transform: translate(-8vw, 4vh) scale(0.9); }
+            100% { transform: translate(4vw, -8vh) scale(1); }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .hero-content-wrapper {
+            position: relative;
+            z-index: 10;
         }
 
         /* GOLD SHIMMER TEXT */
@@ -249,23 +304,7 @@
         }
         .animate-float { animation: float 6s ease-in-out infinite; }
 
-        /* MESH GRADIENT */
-        .mesh-overlay {
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(26, 51, 101, 0.5) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(255, 187, 0, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(26, 51, 101, 0.5) 0px, transparent 50%),
-                radial-gradient(at 0% 100%, rgba(255, 187, 0, 0.08) 0px, transparent 50%);
-        }
 
-        /* PARALLAX MOCKUP */
-        .perspective-1000 { perspective: 1000px; }
-        .parallax-mockup {
-            transition: transform 0.1s ease-out;
-            will-change: transform;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(255,187,0,0.15);
-            transform-style: preserve-3d;
-        }
     </style>
 </head>
 
@@ -336,101 +375,111 @@
 
 
 <!-- ═══════════ HERO ═══════════ -->
-<section id="beranda" class="relative min-h-screen flex items-center hero-bg overflow-hidden" style="background-color: #0f1f3d;">
-    <div class="absolute inset-0 hero-overlay"></div>
-    <div class="absolute inset-0 mesh-overlay opacity-90 pointer-events-none"></div>
-
-    <!-- Geometric Accents -->
-    <div class="absolute top-0 right-0 w-[500px] h-[500px] opacity-[0.04] pointer-events-none">
-        <svg viewBox="0 0 500 500" fill="none">
-            <circle cx="250" cy="250" r="220" stroke="#FFBB00" stroke-width="1"/>
-            <circle cx="250" cy="250" r="170" stroke="#FFBB00" stroke-width="0.5"/>
-            <line x1="30" y1="250" x2="470" y2="250" stroke="#FFBB00" stroke-width="0.5"/>
-            <line x1="250" y1="30" x2="250" y2="470" stroke="#FFBB00" stroke-width="0.5"/>
-        </svg>
+<section id="beranda" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Background Elements -->
+    <div class="hero-dynamic-bg">
+        <div class="mouse-spotlight"></div>
+        <div class="mouse-spotlight-2"></div>
+        <div id="interactive-blobs" class="absolute inset-0 w-full h-full" style="transition: transform 0.2s ease-out; will-change: transform;">
+            <div class="hero-blob blob-1"></div>
+            <div class="hero-blob blob-2"></div>
+            <div class="hero-blob blob-3"></div>
+            <div class="hero-blob blob-4"></div>
+        </div>
     </div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-5 lg:px-8 py-32 w-full pt-40">
-        <div class="grid lg:grid-cols-12 gap-12 items-center">
+    <div class="relative hero-content-wrapper max-w-5xl mx-auto px-5 lg:px-8 py-32 w-full pt-40 flex flex-col items-center text-center">
+        
+        <div data-aos="fade-up" data-aos-duration="1000" class="flex flex-col items-center w-full">
+            <div class="inline-flex items-center gap-3 mb-8 glass-panel rounded-full px-5 py-2">
+                <span class="live-dot w-2 h-2 bg-gold rounded-full inline-block"></span>
+                <span class="text-gold/90 text-[12px] font-bold tracking-[0.2em] uppercase">Pendaftaran Batch 5 Dibuka!</span>
+            </div>
+
+            <h1 class="font-display text-[52px] md:text-[72px] lg:text-[84px] leading-[1.05] text-white mb-8 tracking-wide drop-shadow-2xl">
+                LANGKAH PERTAMA MENJADI<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-gold to-gold-dark" style="animation: shimmer 4s linear infinite; background-size: 200% auto;">PROFESIONAL PAJAK</span><br>
+                <span class="text-white/90">ANDAL</span>
+            </h1>
+
+            <p class="text-blue-100/80 text-[15px] md:text-[17px] mb-12 leading-relaxed font-light max-w-3xl mx-auto">
+                Platform e-learning eksklusif dari Tax Center UIN Sunan Gunung Djati Bandung untuk mengembangkan kompetensi perpajakan di era digital. Kuasai regulasi perpajakan terbaru, pelajari studi kasus nyata, hingga pahami sistem digital modern seperti Coretax langsung bersama para praktisi dan profesional berpengalaman. Tingkatkan nilai profesional dan daya saingmu melalui sertifikasi kompetensi resmi yang dikeluarkan oleh ATPI.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center gap-5">
+                <a href="https://forms.gle/bcJJc1rbRRR8y6vX6" target="_blank"
+                    class="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-gold to-gold-dark hover:from-gold-light hover:to-gold text-navy font-bold px-10 py-4 rounded-full text-[15px] transition-all duration-300 shadow-[0_8px_30px_rgba(255,187,0,0.4)] hover:shadow-[0_12px_40px_rgba(255,187,0,0.6)] hover:-translate-y-1">
+                    <i class="fas fa-user-plus"></i>
+                    Daftar Pelatihan
+                </a>
+                <a href="https://wa.me/6281234567890" target="_blank"
+                    class="inline-flex items-center justify-center gap-3 text-white border border-white/20 hover:bg-white/10 px-10 py-4 rounded-full font-semibold text-[15px] transition-all glass-panel hover:-translate-y-1">
+                    <i class="fab fa-whatsapp text-green-400 text-lg"></i>
+                    Tanya Admin
+                </a>
+            </div>
+
+            <!-- Stats Centered -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-16 max-w-4xl w-full">
+                <div class="glass-panel rounded-3xl p-6 md:p-8 text-center transition-transform hover:-translate-y-2 flex flex-col items-center justify-center border-t border-gold/10 hover:border-gold/30 hover:shadow-[0_10px_40px_rgba(255,187,0,0.15)] group">
+                    <div class="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-users text-gold text-2xl"></i>
+                    </div>
+                    <div class="font-display text-3xl md:text-4xl text-gold mb-3 leading-none tracking-wide">120+ LULUSAN</div>
+                    <div class="text-white/80 text-[12px] md:text-[13px] leading-relaxed font-light">Telah bergabung dan siap bersaing di dunia kerja</div>
+                </div>
+                
+                <div class="glass-panel rounded-3xl p-6 md:p-8 text-center transition-transform hover:-translate-y-2 flex flex-col items-center justify-center border-t border-gold/10 hover:border-gold/30 hover:shadow-[0_10px_40px_rgba(255,187,0,0.15)] group">
+                    <div class="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-book-open text-gold text-2xl"></i>
+                    </div>
+                    <div class="font-display text-3xl md:text-4xl text-gold mb-3 leading-none tracking-wide">11 MATERI<br>PELATIHAN</div>
+                    <div class="text-white/80 text-[12px] md:text-[13px] leading-relaxed font-light">Materi komprehensif dan aplikatif untuk kebutuhan profesional</div>
+                </div>
+
+                <div class="glass-panel rounded-3xl p-6 md:p-8 text-center transition-transform hover:-translate-y-2 flex flex-col items-center justify-center border-t border-gold/10 hover:border-gold/30 hover:shadow-[0_10px_40px_rgba(255,187,0,0.15)] group">
+                    <div class="w-14 h-14 rounded-full bg-gold/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-medal text-gold text-2xl"></i>
+                    </div>
+                    <div class="text-white/90 text-[11px] font-bold tracking-[0.2em] mb-2">TERAFILIASI OLEH</div>
+                    <div class="font-display text-4xl md:text-5xl text-gold mb-3 leading-none tracking-wider drop-shadow-lg">ATPI</div>
+                    <div class="text-white/70 text-[11px] leading-relaxed italic">(Asosiasi Teknisi Perpajakan Indonesia)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 scroll-indicator z-20">
+        <span class="text-white/40 text-[10px] tracking-[0.2em] uppercase font-semibold">Scroll</span>
+        <div class="w-5 h-8 border-2 border-white/20 rounded-full flex items-start justify-center p-1">
+            <div class="w-1.5 h-2 bg-gold rounded-full animate-bounce"></div>
+        </div>
+    </div>
+
+    <!-- Interactive Background Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const heroSection = document.getElementById('beranda');
+            const blobContainer = document.getElementById('interactive-blobs');
             
-            <!-- Left Content -->
-            <div class="lg:col-span-6" data-aos="fade-up" data-aos-duration="1000">
-
-                <div class="inline-flex items-center gap-3 mb-6 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 backdrop-blur-sm">
-                    <span class="live-dot w-2 h-2 bg-gold rounded-full inline-block"></span>
-                    <span class="text-gold/90 text-[11px] font-bold tracking-[0.2em] uppercase">Pendaftaran Batch 5 Dibuka!</span>
-                </div>
-
-                <h1 class="font-display text-[48px] md:text-[64px] lg:text-[72px] leading-[1.05] text-white mb-6 tracking-wide">
-                    LANGKAH PERTAMA MENJADI<br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold via-gold-light to-gold-dark">PROFESIONAL PAJAK</span><br>
-                    <span class="text-white/90">ANDAL</span>
-                </h1>
-
-                <p class="text-blue-100/70 text-[14px] md:text-[15px] mb-10 leading-relaxed font-light text-justify max-w-xl">
-                    Platform e-learning eksklusif dari Tax Center UIN Sunan Gunung Djati Bandung untuk mengembangkan kompetensi perpajakan di era digital. Kuasai regulasi perpajakan terbaru, pelajari studi kasus nyata, hingga pahami sistem digital modern seperti Coretax langsung bersama para praktisi dan profesional berpengalaman. Tingkatkan nilai profesional dan daya saingmu melalui sertifikasi kompetensi resmi yang dikeluarkan oleh ATPI.
-                </p>
-
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="https://forms.gle/bcJJc1rbRRR8y6vX6" target="_blank"
-                        class="group inline-flex items-center justify-center gap-3 bg-gold hover:bg-gold-light text-navy font-bold px-8 py-4 rounded-2xl text-[15px] transition-all duration-300 shadow-[0_8px_30px_rgba(255,187,0,0.3)] hover:-translate-y-1">
-                        <i class="fas fa-user-plus"></i>
-                        Daftar Pelatihan
-                    </a>
-                    <a href="https://wa.me/6281234567890" target="_blank"
-                        class="inline-flex items-center justify-center gap-3 text-white border border-white/25 hover:bg-white/10 px-8 py-4 rounded-2xl font-semibold text-[15px] transition-all backdrop-blur-sm">
-                        <i class="fab fa-whatsapp text-green-400 text-lg"></i>
-                        Tanya Admin
-                    </a>
-                </div>
-
-                <!-- Stats -->
-                <div class="grid grid-cols-3 gap-4 mt-12 max-w-md">
-                    <div class="stat-card rounded-2xl p-4 text-center">
-                        <div class="font-display text-3xl text-gold">100+</div>
-                        <div class="text-white/40 text-[10px] font-medium mt-1 uppercase tracking-wider">Member</div>
-                    </div>
-                    <div class="stat-card rounded-2xl p-4 text-center">
-                        <div class="font-display text-3xl text-gold">3+</div>
-                        <div class="text-white/40 text-[10px] font-medium mt-1 uppercase tracking-wider">Program</div>
-                    </div>
-                    <div class="stat-card rounded-2xl p-4 text-center">
-                        <div class="font-display text-3xl text-gold">A</div>
-                        <div class="text-white/40 text-[10px] font-medium mt-1 uppercase tracking-wider">Akreditasi</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Content: Interactive Mockup -->
-            <div class="lg:col-span-6 hidden lg:block perspective-1000" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="200">
-                <div class="relative w-full aspect-video rounded-2xl border border-white/10 overflow-hidden parallax-mockup group" id="heroMockup">
-                    <div class="absolute inset-0 bg-gradient-to-tr from-navy-dark/60 to-transparent z-10 pointer-events-none"></div>
-                    <img src="{{ asset('images/lms-mockup.png') }}" alt="LMS Dashboard Mockup" class="w-full h-full object-cover object-left-top transform transition-transform duration-700 group-hover:scale-105">
+            if (heroSection) {
+                heroSection.addEventListener('mousemove', (e) => {
+                    const rect = heroSection.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
                     
-                    <!-- Floating elements on mockup -->
-                    <div class="absolute -left-2 top-8 bg-white/10 backdrop-blur-md border border-white/20 p-3 rounded-xl z-20 animate-float shadow-xl flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center"><i class="fas fa-check text-gold text-xs"></i></div>
-                        <div>
-                            <div class="text-white text-[10px] font-bold">Coretax Ready</div>
-                            <div class="text-white/50 text-[9px]">Sistem Terbaru</div>
-                        </div>
-                    </div>
-                    <div class="absolute right-4 bottom-8 bg-navy/90 backdrop-blur-md border border-gold/30 p-4 rounded-xl z-20 animate-float shadow-[0_10px_30px_rgba(255,187,0,0.15)] flex flex-col gap-2" style="animation-delay: -3s;">
-                        <div class="text-gold text-[10px] font-bold tracking-wider uppercase">Sertifikasi ATPI</div>
-                        <div class="w-32 bg-white/10 h-1.5 rounded-full overflow-hidden"><div class="bg-gold w-3/4 h-full"></div></div>
-                    </div>
-                </div>
-            </div>
+                    heroSection.style.setProperty('--mouse-x', `${x}px`);
+                    heroSection.style.setProperty('--mouse-y', `${y}px`);
 
-        </div>
-    </div>
-
-    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 scroll-indicator">
-        <span class="text-white/25 text-[10px] tracking-widest uppercase">Scroll</span>
-        <div class="w-5 h-8 border border-white/20 rounded-full flex items-start justify-center p-1.5">
-            <div class="w-1 h-2 bg-gold rounded-full animate-bounce"></div>
-        </div>
-    </div>
+                    if (blobContainer) {
+                        const moveX = (e.clientX / window.innerWidth - 0.5) * 60; // Max 30px move
+                        const moveY = (e.clientY / window.innerHeight - 0.5) * 60; // Max 30px move
+                        blobContainer.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                    }
+                });
+            }
+        });
+    </script>
 </section>
 
 
@@ -536,9 +585,16 @@
                              class="w-full h-32 object-cover">
                     </div>
                     <!-- Gold stat card -->
-                    <div class="absolute -top-5 -left-5 bg-navy px-6 py-4 rounded-2xl shadow-xl hidden md:block">
-                        <div class="font-display text-3xl text-gold">100+</div>
-                        <div class="text-white/50 text-[10px] font-medium mt-0.5 uppercase tracking-wider">Member Aktif</div>
+                    <div class="absolute -top-5 -left-5 bg-navy px-6 py-4 rounded-2xl shadow-xl hidden md:block border border-gold/30">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
+                                <i class="fas fa-handshake text-gold text-lg"></i>
+                            </div>
+                            <div>
+                                <div class="text-gold font-bold text-[11px] tracking-wide uppercase">Mitra Resmi</div>
+                                <div class="text-white text-[18px] font-display tracking-widest">DJP</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -552,8 +608,8 @@
                     PERPAJAKAN
                 </h2>
                 <div class="gold-divider mb-6"></div>
-                <p class="text-gray-600 leading-relaxed mb-8 text-[15px]">
-                    Tax Center UIN Sunan Gunung Djati Bandung adalah pusat edukasi dan riset yang fokus pada pengembangan literasi pajak bagi mahasiswa dan masyarakat umum, berkolaborasi langsung dengan Direktorat Jenderal Pajak (DJP).
+                <p class="text-gray-600 leading-relaxed mb-8 text-[15px] text-justify">
+                    Tax Center UIN Sunan Gunung Djati Bandung merupakan pusat edukasi, riset, dan pengembangan literasi perpajakan bagi mahasiswa maupun masyarakat umum yang berkolaborasi langsung dengan Direktorat Jenderal Pajak melalui kerja sama bersama Kantor Wilayah Direktorat Jenderal Pajak Jawa Barat I. Resmi dibentuk pada 10 Desember 2020, Tax Center UIN Sunan Gunung Djati Bandung berkomitmen menghadirkan program edukasi, pelatihan, asistensi, dan pengembangan kompetensi perpajakan yang relevan dengan kebutuhan dunia akademik dan profesional di era digital.
                 </p>
                 <div class="grid grid-cols-2 gap-4 mb-10">
                     <div class="flex gap-3 items-start p-4 rounded-2xl bg-gray-50 hover:bg-navy/5 transition-all">
@@ -593,10 +649,34 @@
                         </div>
                     </div>
                 </div>
-                <a href="#program"
-                   class="inline-flex items-center gap-3 bg-navy hover:bg-navy-light text-white font-bold px-8 py-4 rounded-2xl text-sm transition-all hover:-translate-y-1 shadow-lg shadow-navy/20">
-                    Lihat Program <i class="fas fa-arrow-right text-gold text-xs"></i>
-                </a>
+                <!-- Divisi Utama -->
+                <div class="mt-8 border-t border-gray-100 pt-8">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="h-px bg-gray-200 flex-1"></div>
+                        <span class="text-[10px] font-bold text-gray-400 tracking-widest uppercase">Divisi Utama Tax Center</span>
+                        <div class="h-px bg-gray-200 flex-1"></div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-white rounded-2xl p-5 flex flex-col items-center justify-center text-center border border-gray-100 hover:border-gold hover:shadow-lg transition-all group">
+                            <div class="w-12 h-12 bg-navy/5 group-hover:bg-navy rounded-full flex items-center justify-center mb-3 transition-colors">
+                                <i class="fas fa-search text-navy group-hover:text-gold text-lg transition-colors"></i>
+                            </div>
+                            <div class="text-[13px] font-bold text-navy leading-tight">Riset &<br>Pengembangan</div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-5 flex flex-col items-center justify-center text-center border border-gray-100 hover:border-gold hover:shadow-lg transition-all group">
+                            <div class="w-12 h-12 bg-navy/5 group-hover:bg-navy rounded-full flex items-center justify-center mb-3 transition-colors">
+                                <i class="fas fa-users-cog text-navy group-hover:text-gold text-lg transition-colors"></i>
+                            </div>
+                            <div class="text-[13px] font-bold text-navy leading-tight">Hubungan<br>Masyarakat</div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-5 flex flex-col items-center justify-center text-center border border-gray-100 hover:border-gold hover:shadow-lg transition-all group">
+                            <div class="w-12 h-12 bg-navy/5 group-hover:bg-navy rounded-full flex items-center justify-center mb-3 transition-colors">
+                                <i class="fas fa-bullhorn text-navy group-hover:text-gold text-lg transition-colors"></i>
+                            </div>
+                            <div class="text-[13px] font-bold text-navy leading-tight">Media &<br>Informasi</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -944,9 +1024,10 @@
         <img src="{{ asset('images/kampus-aerial.png') }}" alt="Tax Center UIN SGD"
              style="filter: brightness(0.45);">
         <!-- Overlay text on center card -->
-        <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
-            <span style="font-family:'Anton',sans-serif; font-size:38px; color:white; line-height:1; letter-spacing:2px;">JOIN THE</span>
-            <span style="font-family:'Anton',sans-serif; font-size:54px; color:#FFBB00; line-height:1; letter-spacing:2px; text-shadow: 0 0 40px rgba(255,187,0,0.4);">ELITE</span>
+        <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding: 16px;">
+            <span style="font-family:'Poppins',sans-serif; font-size:16px; font-weight:600; color:white; line-height:1.2; letter-spacing:1px; text-transform:uppercase;">Kembangkan Kompetensi</span>
+            <span style="font-family:'Anton',sans-serif; font-size:38px; color:#FFBB00; line-height:1.1; letter-spacing:1.5px; text-shadow: 0 0 30px rgba(255,187,0,0.4); margin: 4px 0;">PERPAJAKANMU</span>
+            <span style="font-family:'Poppins',sans-serif; font-size:16px; font-weight:600; color:white; line-height:1.2; letter-spacing:1px; text-transform:uppercase;">Bersama Kami.</span>
         </div>
         <!-- Bottom label strip -->
         <div style="position:absolute; bottom:0; left:0; right:0; padding:8px 12px; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px);">
@@ -964,7 +1045,7 @@
                class="inline-flex items-center justify-center gap-3 font-bold px-10 py-4 rounded-2xl text-[15px] transition-all hover:-translate-y-1"
                style="background:#FFBB00; color:#1A3365; box-shadow: 0 8px 30px rgba(255,187,0,0.25);">
                 <i class="fas fa-user-plus"></i>
-                Daftar Member Gratis
+                Daftar Pelatihan
             </a>
             <button onclick="toggleModal('loginModal')"
                 class="inline-flex items-center justify-center gap-3 font-semibold px-10 py-4 rounded-2xl text-[15px] transition-all text-white"
@@ -1016,14 +1097,14 @@
                     </div>
                 </div>
                 <div class="flex gap-3">
-                    <a href="#" class="w-9 h-9 rounded-xl bg-white/6 hover:bg-gold flex items-center justify-center text-white/35 hover:text-navy transition-all">
+                    <a href="https://www.instagram.com/taxcenter_uinbdg?igsh=MWoydWQ2dDd1OWF6MQ==" target="_blank" class="w-9 h-9 rounded-xl bg-white/6 hover:bg-gold flex items-center justify-center text-white/35 hover:text-navy transition-all">
                         <i class="fab fa-instagram text-sm"></i>
                     </a>
-                    <a href="#" class="w-9 h-9 rounded-xl bg-white/6 hover:bg-gold flex items-center justify-center text-white/35 hover:text-navy transition-all">
-                        <i class="fab fa-youtube text-sm"></i>
+                    <a href="https://www.tiktok.com/@taxcenter_uinbdg?_r=1&_t=ZS-96EuKxnd0tz" target="_blank" class="w-9 h-9 rounded-xl bg-white/6 hover:bg-gold flex items-center justify-center text-white/35 hover:text-navy transition-all">
+                        <i class="fab fa-tiktok text-sm"></i>
                     </a>
-                    <a href="#" class="w-9 h-9 rounded-xl bg-white/6 hover:bg-gold flex items-center justify-center text-white/35 hover:text-navy transition-all">
-                        <i class="fab fa-linkedin-in text-sm"></i>
+                    <a href="https://youtube.com/@taxcentreapuinsunangunungd3204?si=Bm7mXIsgNfMGP6Jx" target="_blank" class="w-9 h-9 rounded-xl bg-white/6 hover:bg-gold flex items-center justify-center text-white/35 hover:text-navy transition-all">
+                        <i class="fab fa-youtube text-sm"></i>
                     </a>
                 </div>
             </div>
