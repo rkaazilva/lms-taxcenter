@@ -136,7 +136,7 @@ Route::get('/migrate-database', function () {
     return "Database Berhasil Dimigrasi & Diisi Data Admin! <br><a href='/'>Kembali ke Home</a>";
 })->middleware(['cek.login', 'cek.role:ADMIN,ADMIN_LMS']);
 
-// ROUTE MIGRASI AMAN UNTUK PRODUCTION (BUG-004: Dilindungi middleware)
+// ROUTE MIGRASI AMAN UNTUK PRODUCTION (Bisa diakses langsung saat awal deploy untuk setup tabel)
 Route::get('/run-migration-safe', function () {
     try {
         \Illuminate\Support\Facades\Artisan::call('migrate', [
@@ -146,4 +146,4 @@ Route::get('/run-migration-safe', function () {
     } catch (\Exception $e) {
         return "Gagal menjalankan migrasi: " . $e->getMessage();
     }
-})->middleware(['cek.login', 'cek.role:ADMIN,ADMIN_LMS']);
+});
