@@ -26,55 +26,78 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // 1. Ambil URL dari .env
-        $url = env('API_GOOGLE_SHEET');
-
-        // Validasi input dulu biar gak kosong
+        // Validasi input
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
+        $email = trim(strtolower($request->email));
+        $password = trim($request->password);
+
         try {
-            // 2. Tembak API Google Apps Script
-            $response = Http::timeout(15)->get($url, [
-                'action' => 'login',
-                'email'  => trim($request->email),
-                'pass'   => trim($request->password) 
-            ]);
+            // 1. Cek di database lokal terlebih dahulu
+            $user = \App\Models\LmsUser::findByEmail($email);
 
-            $result = $response->json();
+            // Jika tidak ditemukan secara lokal atau password salah (dicek via Hash::check), lakukan sinkronisasi on-demand dari Google Sheets
+            if (!$user || !\Illuminate\Support\Facades\Hash::check($password, $user->password)) {
+                $gs = new \App\Services\GoogleSheetService();
+                $gs->syncLmsUsers();
+                
+                // Cek ulang database lokal setelah sinkronisasi
+                $user = \App\Models\LmsUser::findByEmail($email);
+            }
 
-            // 3. Cek Respon Sukses dari Google
-            if (isset($result['status']) && $result['status'] == 'success') {
+            // 2. Verifikasi final credentials
+            if ($user && \Illuminate\Support\Facades\Hash::check($password, $user->password)) {
+                $role = strtoupper($user->role);
+                $nama = $user->nama;
+
+                // Validasi akun Guru/Tutor di SQLite lokal
+                if (in_array($role, ['TUTOR', 'GURU'])) {
+                    $guru = \App\Models\Guru::findByEmail($email);
+                    if (!$guru) {
+                        return back()
+                            ->withInput($request->only('email'))
+                            ->with('error', 'Akses ditolak. Akun guru Anda belum terdaftar di sistem lokal.');
+                    }
+                    if ($guru->status !== 'active') {
+                        return back()
+                            ->withInput($request->only('email'))
+                            ->with('error', 'Akses ditolak. Akun guru Anda dinonaktifkan oleh Administrator.');
+                    }
+                    $nama = $guru->nama;
+                }
                 
                 // Hapus session lama biar gak bentrok
-                $request->session()->forget(['isLoggedIn', 'email', 'role', 'nama']);
+                $request->session()->forget(['isLoggedIn', 'email', 'role', 'nama', 'link', 'sertifikat', 'kelas']);
 
                 // SIMPAN DATA KE SESSION BARU
                 session([
                     'isLoggedIn' => true,
-                    'email'      => trim($request->email),
-                    'role'       => strtoupper($result['role']), 
-                    'nama'       => $result['message'],
-                    'link'       => $result['url'] ?? ''
+                    'email'      => $email,
+                    'role'       => $role, 
+                    'nama'       => $nama,
+                    'link'       => $user->link ?? '',
+                    'sertifikat' => $user->sertifikat ?? '',
+                    'kelas'      => $user->kelas ?? ''
                 ]);
 
-                // PAKSA SIMPAN KE DISK (Ini kunci biar gak mental)
+                // PAKSA SIMPAN KE SESSION
                 session()->save(); 
 
-                // 4. Redirect ke Dashboard
-                return $this->redirectUser(strtoupper($result['role']));
+                // Redirect ke Dashboard yang sesuai
+                return $this->redirectUser($role);
             }
 
-            // Kalau gagal dari API (Password/Email Salah)
+            // Kalau gagal (Email/Password salah)
             return back()
                 ->withInput($request->only('email'))
-                ->with('error', $result['message'] ?? 'Email atau Password salah!');
+                ->with('error', 'Email atau Password salah!');
 
         } catch (\Exception $e) {
-            // Kalau koneksi/server Google bermasalah
-            return back()->with('error', 'Koneksi ke server pusat bermasalah. Cek internet lu atau URL API.');
+            \Log::error('Login connection error: ' . $e->getMessage(), ['exception' => $e]);
+            return back()->with('error', 'Terjadi kesalahan sistem saat memproses login. Silakan hubungi Administrator.');
         }
     }
 
@@ -85,7 +108,9 @@ class AuthController extends Controller
     {
         if ($role == 'SISWA') {
             return redirect()->route('siswa.dashboard');
-        } elseif ($role == 'TUTOR' || $role == 'ADMIN' || $role == 'GURU') {
+        } elseif (in_array($role, ['ADMIN_LMS', 'ADMIN'])) {
+            return redirect()->route('admin-lms.index');
+        } elseif ($role == 'TUTOR' || $role == 'GURU') {
             return redirect()->route('guru.dashboard');
         }
 

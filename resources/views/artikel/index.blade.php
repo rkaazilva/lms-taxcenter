@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artikel & Berita — Tax Center UIN SGD Bandung</title>
     <meta name="description" content="Kumpulan artikel, berita, dan edukasi perpajakan dari Tax Center UIN Sunan Gunung Djati Bandung.">
+    <link rel="icon" href="{{ asset('images/TAXCENTER.png') }}" type="image/webp">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Anton&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -22,6 +23,27 @@
         .nav-links a { color:rgba(255,255,255,0.7); text-decoration:none; font-size:13px; font-weight:500; padding:6px 12px; border-radius:8px; transition:all 0.2s; }
         .nav-links a:hover { color:white; background:rgba(255,255,255,0.08); }
         .nav-links a.btn-gold { background:#FFBB00; color:#1A3365; font-weight:700; padding:8px 16px; border-radius:10px; }
+
+        /* Mobile Navbar */
+        .mobile-toggle { display: none; background: transparent; border: none; color: white; font-size: 24px; cursor: pointer; }
+        @media(max-width: 768px) {
+            .mobile-toggle { display: block; }
+            .nav-links { 
+                position: absolute; top: 64px; left: 0; right: 0; background: #1A3365; 
+                flex-direction: column; padding: 20px; gap: 15px; 
+                border-top: 1px solid rgba(255,255,255,0.1);
+                display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            }
+            .nav-links.active { display: flex; }
+            .nav-links a { width: 100%; text-align: center; font-size: 15px; padding: 12px; }
+            
+            .hero { padding: 40px 20px 30px; }
+            .hero h1 { font-size: 32px; }
+            .filter-bar { padding: 20px 20px 0; }
+            .search-input { width: 100%; }
+            .search-form { width: 100%; margin-top: 10px; }
+            .articles-grid { padding: 20px 20px 40px; }
+        }
 
         /* Hero */
         .hero { background: linear-gradient(135deg, #0f1f3d 0%, #1A3365 100%); padding: 80px 32px 60px; text-align:center; }
@@ -41,9 +63,26 @@
         .search-form { margin-left:auto; display:flex; gap:6px; }
         .search-input {
             padding:8px 14px; border:1.5px solid #e2e8f0; border-radius:10px;
-            font-size:13px; background:white; width:220px;
+            font-size:13px; background:white; width:220px; flex: 1;
         }
         .search-btn { padding:8px 14px; background:#FFBB00; color:#1A3365; border:none; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px; }
+
+        /* Search History */
+        .search-history {
+            position: absolute; top: 100%; left: 0; right: 0; margin-top: 8px;
+            background: white; border: 1.5px solid #e2e8f0; border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1); z-index: 100; overflow: hidden;
+        }
+        .history-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 14px; border-bottom: 1px solid #f1f5f9; cursor: pointer;
+            font-size: 13px; color: #475569; transition: background 0.2s;
+        }
+        .history-item:hover { background: #f8fafc; color: #1e293b; }
+        .history-item:last-child { border-bottom: none; }
+        .history-text { display: flex; align-items: center; gap: 8px; flex: 1; }
+        .history-delete { color: #cbd5e1; padding: 4px; border-radius: 4px; transition: all 0.2s; }
+        .history-delete:hover { color: #ef4444; background: #fee2e2; }
 
         /* Grid */
         .articles-grid { max-width:1200px; margin:0 auto; padding:28px 32px 60px; display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
@@ -84,10 +123,13 @@
 
 <nav>
     <a href="{{ route('login') }}" class="nav-logo">
-        <img src="{{ asset('images/logo-tc.png') }}" alt="Tax Center">
+        <img src="{{ asset('images/logo-tc.webp') }}" alt="Tax Center">
         <span class="nav-brand">TAX CENTER</span>
     </a>
-    <div class="nav-links">
+    <button class="mobile-toggle" onclick="toggleMobileNav()">
+        <i class="fas fa-bars" id="mobile-icon"></i>
+    </button>
+    <div class="nav-links" id="navLinks">
         <a href="{{ route('login') }}">Beranda</a>
         <a href="{{ route('artikel.index') }}" style="color:white;">Artikel</a>
         <a href="{{ route('login') }}" class="btn-gold">Masuk LMS</a>
@@ -108,10 +150,15 @@
         <a href="{{ route('artikel.index', ['kategori' => $cat]) }}"
            class="filter-chip {{ $category == $cat ? 'active' : '' }}">{{ $cat }}</a>
     @endforeach
-    <form class="search-form" action="{{ route('artikel.index') }}" method="GET">
+    <form class="search-form" action="{{ route('artikel.index') }}" method="GET" id="searchForm">
         @if($category) <input type="hidden" name="kategori" value="{{ $category }}"> @endif
-        <input type="text" name="cari" class="search-input" placeholder="Cari artikel..." value="{{ $search ?? '' }}">
-        <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+        <div style="position:relative; width:100%; display:flex; flex-direction:column;">
+            <div style="display:flex; gap:6px;">
+                <input type="text" name="cari" class="search-input" id="searchInput" placeholder="Cari artikel (Judul/Topik)..." value="{{ $search ?? '' }}" autocomplete="off">
+                <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div id="searchHistory" class="search-history" style="display:none;"></div>
+        </div>
     </form>
 </div>
 
@@ -166,6 +213,89 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script>AOS.init({ once: true, duration: 700 });</script>
+<script>
+    AOS.init({ once: true, duration: 700 });
+
+    // Mobile Nav Toggle
+    function toggleMobileNav() {
+        const nav = document.getElementById('navLinks');
+        const icon = document.getElementById('mobile-icon');
+        nav.classList.toggle('active');
+        if(nav.classList.contains('active')) {
+            icon.classList.replace('fa-bars', 'fa-times');
+        } else {
+            icon.classList.replace('fa-times', 'fa-bars');
+        }
+    }
+
+    // Search History functionality
+    const searchInput = document.getElementById('searchInput');
+    const searchForm = document.getElementById('searchForm');
+    const historyContainer = document.getElementById('searchHistory');
+    const HISTORY_KEY = 'taxcenter_search_history';
+
+    function getHistory() {
+        try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+        catch (e) { return []; }
+    }
+
+    function saveHistory(term) {
+        if (!term || !term.trim()) return;
+        let history = getHistory();
+        history = history.filter(item => item.toLowerCase() !== term.toLowerCase());
+        history.unshift(term);
+        if (history.length > 5) history.pop();
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    }
+
+    function removeHistory(term, e) {
+        e.stopPropagation();
+        let history = getHistory();
+        history = history.filter(item => item !== term);
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        renderHistory();
+    }
+
+    function renderHistory() {
+        const history = getHistory();
+        if (history.length === 0) {
+            historyContainer.style.display = 'none';
+            return;
+        }
+        
+        historyContainer.innerHTML = history.map(term => `
+            <div class="history-item" onclick="applySearch('${term.replace(/'/g, "\\'")}')">
+                <div class="history-text">
+                    <i class="fas fa-history" style="opacity:0.5; font-size:11px;"></i>
+                    <span>${term}</span>
+                </div>
+                <div class="history-delete" onclick="removeHistory('${term.replace(/'/g, "\\'")}', event)">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+        `).join('');
+        historyContainer.style.display = 'block';
+    }
+
+    function applySearch(term) {
+        searchInput.value = term;
+        searchForm.submit();
+    }
+
+    searchInput.addEventListener('focus', renderHistory);
+    
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !historyContainer.contains(e.target)) {
+            historyContainer.style.display = 'none';
+        }
+    });
+
+    searchForm.addEventListener('submit', () => {
+        saveHistory(searchInput.value);
+    });
+
+    const currentSearch = "{{ $search ?? '' }}";
+    if (currentSearch) saveHistory(currentSearch);
+</script>
 </body>
 </html>

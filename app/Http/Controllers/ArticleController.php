@@ -22,7 +22,8 @@ class ArticleController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('excerpt', 'like', "%{$search}%");
+                  ->orWhere('excerpt', 'like', "%{$search}%")
+                  ->orWhere('category', 'like', "%{$search}%");
             });
         }
 
@@ -35,13 +36,26 @@ class ArticleController extends Controller
     // Public: detail artikel
     public function show(string $slug)
     {
-        $article  = Article::published()->where('slug', $slug)->firstOrFail();
-        $related  = Article::published()
+        $article = Article::published()->where('slug', $slug)->firstOrFail();
+
+        // Artikel terkait (kategori sama, max 4 untuk sidebar)
+        $related = Article::published()
                         ->where('category', $article->category)
                         ->where('id', '!=', $article->id)
                         ->latest('published_at')
-                        ->take(3)
+                        ->take(4)
                         ->get();
+
+        // Artikel lainnya jika related kurang dari 4
+        if ($related->count() < 4) {
+            $moreIds = $related->pluck('id')->push($article->id)->toArray();
+            $more = Article::published()
+                ->whereNotIn('id', $moreIds)
+                ->latest('published_at')
+                ->take(4 - $related->count())
+                ->get();
+            $related = $related->merge($more);
+        }
 
         return view('artikel.show', compact('article', 'related'));
     }

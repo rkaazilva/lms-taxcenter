@@ -41,17 +41,17 @@
     .empty-state i { font-size:40px; margin-bottom:12px; display:block; }
 </style>
 
-<div class="page-header">
+<div class="page-header" style="flex-wrap: wrap; gap: 15px;">
     <div>
         <h1>📰 Kelola Artikel</h1>
         <p style="color:#64748b; font-size:13px; margin-top:2px;">Total: {{ $articles->total() }} artikel</p>
     </div>
-    <a href="{{ route('admin.articles.create') }}" class="btn-primary">
+    <a href="{{ route('admin.articles.create') }}" class="btn-primary" style="white-space:nowrap;">
         <i class="fas fa-plus"></i> Tulis Artikel Baru
     </a>
 </div>
 
-<div class="card">
+<div class="card" style="overflow-x: auto; min-width: 100%;">
     @if($articles->count())
     <table>
         <thead>

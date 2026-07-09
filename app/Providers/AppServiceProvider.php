@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \Illuminate\Support\Facades\Http::globalOptions([
+            'force_ip_resolve' => 'v4',
+        ]);
     }
 }

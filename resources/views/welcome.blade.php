@@ -6,6 +6,7 @@
     <title>Tax Center UIN Sunan Gunung Djati Bandung</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="{{ asset('images/TAXCENTER.png') }}" type="image/webp">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -44,7 +45,7 @@
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: var(--navy); border-radius: 10px; }
 
-        body { overflow-x: hidden; }
+        html, body { overflow-x: hidden; width: 100%; position: relative; }
         body.modal-active { overflow: hidden !important; }
 
         /* NAVBAR */
@@ -317,12 +318,10 @@
 
             <!-- Logo Group -->
             <div class="flex items-center gap-4 cursor-pointer" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-                <div class="flex items-center gap-3">
-                    <img src="{{ asset('images/logo-uin.png') }}" alt="UIN SGD" class="h-10 w-auto object-contain">
-                    <div class="w-px h-7 bg-white/20"></div>
-                    <img src="{{ asset('images/logo-tc.png') }}" alt="Tax Center" class="h-9 w-auto object-contain">
-                    <div class="w-px h-7 bg-white/20 hidden sm:block"></div>
-                    <img src="{{ asset('images/logo-djp.png') }}" alt="DJP" class="h-8 w-auto object-contain hidden sm:block">
+                <div class="flex items-center gap-3 flex-shrink-0">
+                    <img src="{{ asset('images/logo-uin.webp') }}" alt="UIN SGD" class="h-10 w-auto object-contain flex-shrink-0" style="min-width:auto;">
+                    <div class="w-px h-7 bg-white/20 flex-shrink-0"></div>
+                    <img src="{{ asset('images/logo-tc.webp') }}" alt="Tax Center" class="h-9 w-auto object-contain flex-shrink-0" style="min-width:auto;">
                 </div>
                 <div class="hidden lg:flex flex-col ml-1">
                     <span class="font-display text-white text-[15px] leading-tight tracking-wide">TAX CENTER</span>
@@ -393,12 +392,12 @@
         <div data-aos="fade-up" data-aos-duration="1000" class="flex flex-col items-center w-full">
             <div class="inline-flex items-center gap-3 mb-8 glass-panel rounded-full px-5 py-2">
                 <span class="live-dot w-2 h-2 bg-gold rounded-full inline-block"></span>
-                <span class="text-gold/90 text-[12px] font-bold tracking-[0.2em] uppercase">Pendaftaran Batch 5 Dibuka!</span>
+                <span class="text-gold/90 text-[11px] md:text-[12px] font-bold tracking-[0.2em] uppercase text-center">Pendaftaran Batch 6 Dibuka!</span>
             </div>
 
-            <h1 class="font-display text-[52px] md:text-[72px] lg:text-[84px] leading-[1.05] text-white mb-8 tracking-wide drop-shadow-2xl">
+            <h1 class="font-display text-[28px] sm:text-[40px] md:text-[60px] lg:text-[72px] leading-[1.15] text-white mb-6 md:mb-8 tracking-wide drop-shadow-2xl">
                 LANGKAH PERTAMA MENJADI<br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-gold to-gold-dark" style="animation: shimmer 4s linear infinite; background-size: 200% auto;">PROFESIONAL PAJAK</span><br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-gold to-gold-dark inline-block" style="animation: shimmer 4s linear infinite; background-size: 200% auto; padding-right: 2px;">PROFESIONAL PAJAK</span><br>
                 <span class="text-white/90">ANDAL</span>
             </h1>
 
@@ -406,16 +405,16 @@
                 Platform e-learning eksklusif dari Tax Center UIN Sunan Gunung Djati Bandung untuk mengembangkan kompetensi perpajakan di era digital. Kuasai regulasi perpajakan terbaru, pelajari studi kasus nyata, hingga pahami sistem digital modern seperti Coretax langsung bersama para praktisi dan profesional berpengalaman. Tingkatkan nilai profesional dan daya saingmu melalui sertifikasi kompetensi resmi yang dikeluarkan oleh ATPI.
             </p>
 
-            <div class="flex flex-col sm:flex-row items-center gap-5">
+            <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
                 <a href="https://forms.gle/bcJJc1rbRRR8y6vX6" target="_blank"
-                    class="group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-gold to-gold-dark hover:from-gold-light hover:to-gold text-navy font-bold px-10 py-4 rounded-full text-[15px] transition-all duration-300 shadow-[0_8px_30px_rgba(255,187,0,0.4)] hover:shadow-[0_12px_40px_rgba(255,187,0,0.6)] hover:-translate-y-1">
+                    class="w-full sm:w-auto group inline-flex items-center justify-center gap-3 bg-gradient-to-r from-gold to-gold-dark hover:from-gold-light hover:to-gold text-navy font-bold px-10 py-4 rounded-full text-[15px] transition-all duration-300 shadow-[0_8px_30px_rgba(255,187,0,0.4)] hover:shadow-[0_12px_40px_rgba(255,187,0,0.6)] hover:-translate-y-1">
                     <i class="fas fa-user-plus"></i>
                     Daftar Pelatihan
                 </a>
-                <a href="https://wa.me/6281234567890" target="_blank"
-                    class="inline-flex items-center justify-center gap-3 text-white border border-white/20 hover:bg-white/10 px-10 py-4 rounded-full font-semibold text-[15px] transition-all glass-panel hover:-translate-y-1">
+                <a href="https://wa.me/6289637014638" target="_blank"
+                    class="w-full sm:w-auto inline-flex items-center justify-center gap-3 text-white border border-white/20 hover:bg-white/10 px-10 py-4 rounded-full font-semibold text-[15px] transition-all glass-panel hover:-translate-y-1">
                     <i class="fab fa-whatsapp text-green-400 text-lg"></i>
-                    Tanya Admin
+                    Pusat Bantuan
                 </a>
             </div>
 
@@ -449,10 +448,12 @@
         </div>
     </div>
 
-    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 scroll-indicator z-20">
-        <span class="text-white/40 text-[10px] tracking-[0.2em] uppercase font-semibold">Scroll</span>
-        <div class="w-5 h-8 border-2 border-white/20 rounded-full flex items-start justify-center p-1">
-            <div class="w-1.5 h-2 bg-gold rounded-full animate-bounce"></div>
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20">
+        <div class="flex flex-col items-center gap-2 scroll-indicator">
+            <span class="text-white/40 text-[10px] tracking-[0.2em] uppercase font-semibold">Scroll</span>
+            <div class="w-5 h-8 border-2 border-white/20 rounded-full flex items-start justify-center p-1">
+                <div class="w-1.5 h-2 bg-gold rounded-full animate-bounce"></div>
+            </div>
         </div>
     </div>
 
@@ -484,16 +485,25 @@
 
 
 <!-- ═══════════ PARTNER STRIP ═══════════ -->
-<div class="bg-white border-y border-gray-100 py-7">
+<div class="bg-white border-y border-gray-100 py-8">
     <div class="max-w-7xl mx-auto px-5 lg:px-8">
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-14">
-            <span class="text-[10px] font-bold text-gray-400 tracking-widest uppercase">Mitra Resmi</span>
-            <div class="flex items-center gap-10">
-                <img src="{{ asset('images/logo-uin.png') }}" alt="UIN SGD" class="h-11 w-auto partner-logo">
-                <div class="w-px h-9 bg-gray-200"></div>
-                <img src="{{ asset('images/logo-tc.png') }}" alt="Tax Center" class="h-11 w-auto partner-logo">
-                <div class="w-px h-9 bg-gray-200"></div>
-                <img src="{{ asset('images/logo-djp.png') }}" alt="DJP" class="h-10 w-auto partner-logo">
+        <div class="flex flex-col items-center gap-5">
+            <span class="text-[10px] font-bold text-gray-400 tracking-widest uppercase">Didukung & Bermitra Dengan</span>
+            <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-14">
+                <div class="flex flex-col items-center gap-2 group">
+                    <img src="{{ asset('images/logo-uin.webp') }}" alt="UIN SGD" class="h-12 w-auto partner-logo">
+                    <span class="text-[9px] text-gray-400 font-semibold tracking-widest uppercase group-hover:text-navy transition-colors">UIN SGD</span>
+                </div>
+                <div class="w-px h-12 bg-gray-100 hidden sm:block"></div>
+                <div class="flex flex-col items-center gap-2 group">
+                    <img src="{{ asset('images/logo-djp.webp') }}" alt="DJP" class="h-11 w-auto partner-logo">
+                    <span class="text-[9px] text-gray-400 font-semibold tracking-widest uppercase group-hover:text-navy transition-colors">DJP</span>
+                </div>
+                <div class="w-px h-12 bg-gray-100 hidden sm:block"></div>
+                <div class="flex flex-col items-center gap-2 group">
+                    <img src="{{ asset('images/logo-atpi.webp') }}" alt="ATPI" class="h-11 w-auto partner-logo">
+                    <span class="text-[9px] text-gray-400 font-semibold tracking-widest uppercase group-hover:text-navy transition-colors">ATPI</span>
+                </div>
             </div>
         </div>
     </div>
@@ -569,116 +579,122 @@
 <!-- ═══════════ TENTANG KAMI ═══════════ -->
 <section id="tentang" class="py-28 bg-white">
     <div class="max-w-7xl mx-auto px-5 lg:px-8">
-        <div class="grid lg:grid-cols-2 gap-20 items-center">
 
-            <!-- Image Collage -->
-            <div class="relative" data-aos="fade-right" data-aos-duration="900">
-                <div class="relative">
-                    <!-- Main image -->
-                    <div class="rounded-3xl overflow-hidden shadow-2xl aspect-[4/3]">
-                        <img src="{{ asset('images/kampus-fisip.jpg') }}" alt="Gedung FISIP UIN SGD"
-                             class="w-full h-full object-cover hover:scale-105 transition-transform duration-700 animate-float">
+        <!-- Section Header — Centered -->
+        <div class="text-center mb-16" data-aos="fade-up">
+            <div class="section-label mb-5 inline-flex">Tentang Kami</div>
+            <h2 class="font-display text-[36px] md:text-[56px] leading-tight text-navy tracking-wide">
+                WADAH KOLABORASI<br>
+                <span class="text-gold">& INOVASI</span> PERPAJAKAN
+            </h2>
+            <div class="gold-divider mx-auto mt-6 mb-0"></div>
+        </div>
+
+        <!-- Full-Width Image Banner with Overlay Stats -->
+        <div class="relative rounded-3xl overflow-hidden shadow-2xl mb-16 flex flex-col justify-center" data-aos="fade-up" data-aos-delay="100" style="min-height: 400px;">
+            <img src="{{ asset('images/kampus-fisip.webp') }}" alt="Gedung FISIP UIN SGD"
+                 class="absolute inset-0 w-full h-full object-cover z-0">
+            <!-- Dark gradient overlay -->
+            <div class="absolute inset-0 z-10 bg-navy/80 md:bg-transparent" style="background: linear-gradient(to right, rgba(10,20,50,0.95) 0%, rgba(10,20,50,0.7) 50%, rgba(10,20,50,0.2) 100%);"></div>
+
+            <!-- Floating content inside banner -->
+            <div class="relative z-20 px-6 py-10 md:py-0 sm:px-10 md:px-16 max-w-3xl w-full">
+                <div class="flex items-center gap-3 mb-4 md:mb-5">
+                    <div class="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center">
+                        <i class="fas fa-handshake text-gold text-sm"></i>
                     </div>
-                    <!-- Floating small card bottom right -->
-                    <div class="absolute -bottom-6 -right-6 w-48 rounded-2xl overflow-hidden shadow-xl border-4 border-white hidden md:block">
-                        <img src="{{ asset('images/kampus-gedung.png') }}" alt="Kampus UIN SGD"
-                             class="w-full h-32 object-cover">
+                    <span class="text-gold text-[10px] sm:text-[11px] font-bold tracking-[0.25em] uppercase">Mitra Resmi DJP</span>
+                </div>
+                <p class="text-white/90 leading-relaxed text-[14px] sm:text-[15px] md:text-[16px] text-justify md:text-left">
+                    Tax Center UIN Sunan Gunung Djati Bandung merupakan pusat edukasi, riset, dan pengembangan literasi perpajakan bagi mahasiswa maupun masyarakat umum yang berkolaborasi langsung dengan Direktorat Jenderal Pajak. Resmi dibentuk pada <strong class="text-gold">10 Desember 2020</strong>.
+                </p>
+                <!-- Mini stat strip inside banner -->
+                <div class="flex flex-wrap gap-4 sm:gap-6 mt-6 md:mt-8">
+                    <div>
+                        <div class="text-gold font-display text-xl sm:text-2xl tracking-wide">2020</div>
+                        <div class="text-white/60 text-[10px] sm:text-[11px] uppercase tracking-wider">Tahun Berdiri</div>
                     </div>
-                    <!-- Gold stat card -->
-                    <div class="absolute -top-5 -left-5 bg-navy px-6 py-4 rounded-2xl shadow-xl hidden md:block border border-gold/30">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
-                                <i class="fas fa-handshake text-gold text-lg"></i>
-                            </div>
-                            <div>
-                                <div class="text-gold font-bold text-[11px] tracking-wide uppercase">Mitra Resmi</div>
-                                <div class="text-white text-[18px] font-display tracking-widest">DJP</div>
-                            </div>
-                        </div>
+                    <div class="w-px bg-white/20"></div>
+                    <div>
+                        <div class="text-gold font-display text-xl sm:text-2xl tracking-wide">120+</div>
+                        <div class="text-white/60 text-[10px] sm:text-[11px] uppercase tracking-wider">Lulusan</div>
+                    </div>
+                    <div class="w-px bg-white/20"></div>
+                    <div>
+                        <div class="text-gold font-display text-xl sm:text-2xl tracking-wide">ATPI</div>
+                        <div class="text-white/60 text-[10px] sm:text-[11px] uppercase tracking-wider">Terafiliasi</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Content -->
-            <div data-aos="fade-left" data-aos-duration="900" data-aos-delay="100">
-                <div class="section-label mb-6">Tentang Kami</div>
-                <h2 class="font-display text-[40px] md:text-[50px] leading-[0.95] text-navy mb-6 tracking-wide">
-                    WADAH KOLABORASI<br>
-                    <span class="text-gold">& INOVASI</span><br>
-                    PERPAJAKAN
-                </h2>
-                <div class="gold-divider mb-6"></div>
-                <p class="text-gray-600 leading-relaxed mb-8 text-[15px] text-justify">
-                    Tax Center UIN Sunan Gunung Djati Bandung merupakan pusat edukasi, riset, dan pengembangan literasi perpajakan bagi mahasiswa maupun masyarakat umum yang berkolaborasi langsung dengan Direktorat Jenderal Pajak melalui kerja sama bersama Kantor Wilayah Direktorat Jenderal Pajak Jawa Barat I. Resmi dibentuk pada 10 Desember 2020, Tax Center UIN Sunan Gunung Djati Bandung berkomitmen menghadirkan program edukasi, pelatihan, asistensi, dan pengembangan kompetensi perpajakan yang relevan dengan kebutuhan dunia akademik dan profesional di era digital.
-                </p>
-                <div class="grid grid-cols-2 gap-4 mb-10">
-                    <div class="flex gap-3 items-start p-4 rounded-2xl bg-gray-50 hover:bg-navy/5 transition-all">
-                        <div class="w-10 h-10 bg-navy rounded-xl flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-certificate text-gold text-sm"></i>
-                        </div>
-                        <div>
-                            <div class="font-bold text-sm text-navy">Terakreditasi</div>
-                            <div class="text-xs text-gray-400 mt-0.5">Standar Nasional DJP</div>
-                        </div>
-                    </div>
-                    <div class="flex gap-3 items-start p-4 rounded-2xl bg-gray-50 hover:bg-navy/5 transition-all">
-                        <div class="w-10 h-10 bg-gold rounded-xl flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-user-tie text-navy text-sm"></i>
-                        </div>
-                        <div>
-                            <div class="font-bold text-sm text-navy">Expert Coach</div>
-                            <div class="text-xs text-gray-400 mt-0.5">Praktisi Senior Pajak</div>
-                        </div>
-                    </div>
-                    <div class="flex gap-3 items-start p-4 rounded-2xl bg-gray-50 hover:bg-navy/5 transition-all">
-                        <div class="w-10 h-10 bg-navy rounded-xl flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-hands-helping text-gold text-sm"></i>
-                        </div>
-                        <div>
-                            <div class="font-bold text-sm text-navy">Relawan Pajak</div>
-                            <div class="text-xs text-gray-400 mt-0.5">Pengabdian Masyarakat</div>
-                        </div>
-                    </div>
-                    <div class="flex gap-3 items-start p-4 rounded-2xl bg-gray-50 hover:bg-navy/5 transition-all">
-                        <div class="w-10 h-10 bg-gold rounded-xl flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-network-wired text-navy text-sm"></i>
-                        </div>
-                        <div>
-                            <div class="font-bold text-sm text-navy">Jejaring Luas</div>
-                            <div class="text-xs text-gray-400 mt-0.5">Alumni & Profesional</div>
-                        </div>
-                    </div>
+            <!-- Floating mini photo right side -->
+            <div class="absolute bottom-6 right-6 w-44 rounded-2xl overflow-hidden shadow-xl border-4 border-white/20 hidden md:block">
+                <img src="{{ asset('images/kampus-gedung.webp') }}" alt="Kampus UIN SGD"
+                     class="w-full h-28 object-cover">
+            </div>
+        </div>
+
+        <!-- 4 Feature Cards — equal grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-14" data-aos="fade-up" data-aos-delay="150">
+            <div class="flex flex-col items-center text-center p-6 rounded-2xl bg-gray-50 hover:bg-navy/5 hover:shadow-md transition-all group border border-transparent hover:border-navy/10">
+                <div class="w-12 h-12 bg-navy rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-certificate text-gold"></i>
                 </div>
-                <!-- Divisi Utama -->
-                <div class="mt-8 border-t border-gray-100 pt-8">
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="h-px bg-gray-200 flex-1"></div>
-                        <span class="text-[10px] font-bold text-gray-400 tracking-widest uppercase">Divisi Utama Tax Center</span>
-                        <div class="h-px bg-gray-200 flex-1"></div>
+                <div class="font-bold text-sm text-navy mb-1">Terakreditasi</div>
+                <div class="text-xs text-gray-400">Standar Nasional DJP</div>
+            </div>
+            <div class="flex flex-col items-center text-center p-6 rounded-2xl bg-gray-50 hover:bg-gold/5 hover:shadow-md transition-all group border border-transparent hover:border-gold/20">
+                <div class="w-12 h-12 bg-gold rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-user-tie text-navy"></i>
+                </div>
+                <div class="font-bold text-sm text-navy mb-1">Expert Coach</div>
+                <div class="text-xs text-gray-400">Praktisi Senior Pajak</div>
+            </div>
+            <div class="flex flex-col items-center text-center p-6 rounded-2xl bg-gray-50 hover:bg-navy/5 hover:shadow-md transition-all group border border-transparent hover:border-navy/10">
+                <div class="w-12 h-12 bg-navy rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-hands-helping text-gold"></i>
+                </div>
+                <div class="font-bold text-sm text-navy mb-1">Relawan Pajak</div>
+                <div class="text-xs text-gray-400">Pengabdian Masyarakat</div>
+            </div>
+            <div class="flex flex-col items-center text-center p-6 rounded-2xl bg-gray-50 hover:bg-gold/5 hover:shadow-md transition-all group border border-transparent hover:border-gold/20">
+                <div class="w-12 h-12 bg-gold rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-network-wired text-navy"></i>
+                </div>
+                <div class="font-bold text-sm text-navy mb-1">Jejaring Luas</div>
+                <div class="text-xs text-gray-400">Alumni & Profesional</div>
+            </div>
+        </div>
+
+        <!-- Divisi Utama — full width centered -->
+        <div data-aos="fade-up" data-aos-delay="200">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="h-px bg-gray-200 flex-1"></div>
+                <span class="text-[10px] font-bold text-gray-400 tracking-widest uppercase">Divisi Utama Tax Center</span>
+                <div class="h-px bg-gray-200 flex-1"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-5 max-w-2xl mx-auto">
+                <div class="bg-white rounded-2xl p-6 flex flex-col items-center justify-center text-center border border-gray-100 hover:border-gold hover:shadow-lg transition-all group">
+                    <div class="w-14 h-14 bg-navy/5 group-hover:bg-navy rounded-2xl flex items-center justify-center mb-3 transition-colors">
+                        <i class="fas fa-search text-navy group-hover:text-gold text-xl transition-colors"></i>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-white rounded-2xl p-5 flex flex-col items-center justify-center text-center border border-gray-100 hover:border-gold hover:shadow-lg transition-all group">
-                            <div class="w-12 h-12 bg-navy/5 group-hover:bg-navy rounded-full flex items-center justify-center mb-3 transition-colors">
-                                <i class="fas fa-search text-navy group-hover:text-gold text-lg transition-colors"></i>
-                            </div>
-                            <div class="text-[13px] font-bold text-navy leading-tight">Riset &<br>Pengembangan</div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-5 flex flex-col items-center justify-center text-center border border-gray-100 hover:border-gold hover:shadow-lg transition-all group">
-                            <div class="w-12 h-12 bg-navy/5 group-hover:bg-navy rounded-full flex items-center justify-center mb-3 transition-colors">
-                                <i class="fas fa-users-cog text-navy group-hover:text-gold text-lg transition-colors"></i>
-                            </div>
-                            <div class="text-[13px] font-bold text-navy leading-tight">Hubungan<br>Masyarakat</div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-5 flex flex-col items-center justify-center text-center border border-gray-100 hover:border-gold hover:shadow-lg transition-all group">
-                            <div class="w-12 h-12 bg-navy/5 group-hover:bg-navy rounded-full flex items-center justify-center mb-3 transition-colors">
-                                <i class="fas fa-bullhorn text-navy group-hover:text-gold text-lg transition-colors"></i>
-                            </div>
-                            <div class="text-[13px] font-bold text-navy leading-tight">Media &<br>Informasi</div>
-                        </div>
+                    <div class="text-[13px] font-bold text-navy leading-tight">Riset &<br>Pengembangan</div>
+                </div>
+                <div class="bg-white rounded-2xl p-6 flex flex-col items-center justify-center text-center border border-gray-100 hover:border-gold hover:shadow-lg transition-all group">
+                    <div class="w-14 h-14 bg-navy/5 group-hover:bg-navy rounded-2xl flex items-center justify-center mb-3 transition-colors">
+                        <i class="fas fa-users-cog text-navy group-hover:text-gold text-xl transition-colors"></i>
                     </div>
+                    <div class="text-[13px] font-bold text-navy leading-tight">Hubungan<br>Masyarakat</div>
+                </div>
+                <div class="bg-white rounded-2xl p-6 flex flex-col items-center justify-center text-center border border-gray-100 hover:border-gold hover:shadow-lg transition-all group">
+                    <div class="w-14 h-14 bg-navy/5 group-hover:bg-navy rounded-2xl flex items-center justify-center mb-3 transition-colors">
+                        <i class="fas fa-bullhorn text-navy group-hover:text-gold text-xl transition-colors"></i>
+                    </div>
+                    <div class="text-[13px] font-bold text-navy leading-tight">Media &<br>Informasi</div>
                 </div>
             </div>
         </div>
+
     </div>
 </section>
 
@@ -956,7 +972,7 @@
 
 
 <!-- ═══════════ CTA SECTION — FLOATING PHOTO COLLAGE ═══════════ -->
-<section class="relative overflow-hidden" style="background-color: #0f1f3d; min-height: 600px;">
+<section class="relative overflow-hidden" style="background-color: #0f1f3d; min-height: 700px;">
 
     <style>
         /* Floating card base */
@@ -997,37 +1013,37 @@
     <!-- Card 1: Top-left, aerial wide -->
     <div class="photo-card card-drift1 hidden md:block"
          style="width:280px; height:175px; top:60px; left:5%; z-index:4; transform: rotate(-6deg);">
-        <img src="{{ asset('images/kampus-aerial-wide.png') }}" alt="Kampus Aerial">
+        <img src="{{ asset('images/kampus-aerial-wide.webp') }}" alt="Kampus Aerial">
     </div>
 
     <!-- Card 2: Top-right, FISIP building -->
     <div class="photo-card card-drift2 hidden md:block"
          style="width:260px; height:165px; top:40px; right:4%; z-index:4; transform: rotate(4deg);">
-        <img src="{{ asset('images/kampus-fisip.jpg') }}" alt="Gedung FISIP">
+        <img src="{{ asset('images/kampus-fisip.webp') }}" alt="Gedung FISIP">
     </div>
 
     <!-- Card 3: Bottom-left, Gedung K -->
     <div class="photo-card card-drift3 hidden md:block"
          style="width:240px; height:160px; bottom:60px; left:7%; z-index:4; transform: rotate(-3deg);">
-        <img src="{{ asset('images/kampus-gedung.png') }}" alt="Gedung Kampus">
+        <img src="{{ asset('images/kampus-gedung.webp') }}" alt="Gedung Kampus">
     </div>
 
     <!-- Card 4: Bottom-right, Gedung Keuangan Negara -->
     <div class="photo-card card-drift4 hidden md:block"
          style="width:270px; height:170px; bottom:50px; right:5%; z-index:4; transform: rotate(5deg);">
-        <img src="{{ asset('images/kampus-keuangan.png') }}" alt="Gedung Keuangan Negara">
+        <img src="{{ asset('images/kampus-keuangan.webp') }}" alt="Gedung Keuangan Negara">
     </div>
 
     <!-- CENTER CARD (hero card) — the main one with overlay text -->
     <div class="photo-card"
-         style="width:360px; height:230px; top:50%; left:50%; transform: translate(-50%,-50%); z-index:8; border-radius:22px; border: 2px solid rgba(255,187,0,0.2);">
-        <img src="{{ asset('images/kampus-aerial.png') }}" alt="Tax Center UIN SGD"
+         style="width:90%; max-width:360px; height:auto; aspect-ratio:36/23; top:50%; left:50%; transform: translate(-50%,-50%); z-index:8; border-radius:22px; border: 2px solid rgba(255,187,0,0.2);">
+        <img src="{{ asset('images/kampus-aerial.webp') }}" alt="Tax Center UIN SGD"
              style="filter: brightness(0.45);">
         <!-- Overlay text on center card -->
         <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding: 16px;">
-            <span style="font-family:'Poppins',sans-serif; font-size:16px; font-weight:600; color:white; line-height:1.2; letter-spacing:1px; text-transform:uppercase;">Kembangkan Kompetensi</span>
-            <span style="font-family:'Anton',sans-serif; font-size:38px; color:#FFBB00; line-height:1.1; letter-spacing:1.5px; text-shadow: 0 0 30px rgba(255,187,0,0.4); margin: 4px 0;">PERPAJAKANMU</span>
-            <span style="font-family:'Poppins',sans-serif; font-size:16px; font-weight:600; color:white; line-height:1.2; letter-spacing:1px; text-transform:uppercase;">Bersama Kami.</span>
+            <span style="font-family:'Poppins',sans-serif; font-size:clamp(12px, 4vw, 16px); font-weight:600; color:white; line-height:1.2; letter-spacing:1px; text-transform:uppercase;">Kembangkan Kompetensi</span>
+            <span style="font-family:'Anton',sans-serif; font-size:clamp(28px, 8vw, 38px); color:#FFBB00; line-height:1.1; letter-spacing:1.5px; text-shadow: 0 0 30px rgba(255,187,0,0.4); margin: 4px 0;">PERPAJAKANMU</span>
+            <span style="font-family:'Poppins',sans-serif; font-size:clamp(12px, 4vw, 16px); font-weight:600; color:white; line-height:1.2; letter-spacing:1px; text-transform:uppercase;">Bersama Kami.</span>
         </div>
         <!-- Bottom label strip -->
         <div style="position:absolute; bottom:0; left:0; right:0; padding:8px 12px; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px);">
@@ -1036,19 +1052,19 @@
     </div>
 
     <!-- Actual content sits below the collage, pushed down -->
-    <div class="relative z-10 flex flex-col items-center justify-end pb-16 pt-[420px] md:pt-[460px] px-5 text-center">
+    <div class="relative z-10 flex flex-col items-center justify-end pb-16 pt-[480px] md:pt-[520px] px-5 text-center mt-8">
         <div class="inline-block mb-5 px-4 py-1.5 rounded-full" style="background: rgba(255,187,0,0.12); border: 1px solid rgba(255,187,0,0.25);">
             <span style="color:#FFBB00; font-size:11px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase;">Bergabung Sekarang</span>
         </div>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <div class="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto px-5 sm:px-0">
             <a href="https://forms.gle/bcJJc1rbRRR8y6vX6" target="_blank"
-               class="inline-flex items-center justify-center gap-3 font-bold px-10 py-4 rounded-2xl text-[15px] transition-all hover:-translate-y-1"
+               class="w-full sm:w-auto inline-flex items-center justify-center gap-3 font-bold px-10 py-4 rounded-2xl text-[15px] transition-all hover:-translate-y-1"
                style="background:#FFBB00; color:#1A3365; box-shadow: 0 8px 30px rgba(255,187,0,0.25);">
                 <i class="fas fa-user-plus"></i>
                 Daftar Pelatihan
             </a>
             <button onclick="toggleModal('loginModal')"
-                class="inline-flex items-center justify-center gap-3 font-semibold px-10 py-4 rounded-2xl text-[15px] transition-all text-white"
+                class="w-full sm:w-auto inline-flex items-center justify-center gap-3 font-semibold px-10 py-4 rounded-2xl text-[15px] transition-all text-white"
                 style="border: 1px solid rgba(255,255,255,0.2);"
                 onmouseover="this.style.background='rgba(255,255,255,0.08)'"
                 onmouseout="this.style.background='transparent'">
@@ -1066,7 +1082,7 @@
         <div class="grid md:grid-cols-3 gap-12 mb-12 pb-12 border-b border-white/8">
             <div>
                 <div class="flex items-center gap-3 mb-5">
-                    <img src="{{ asset('images/logo-tc.png') }}" alt="Tax Center"
+                    <img src="{{ asset('images/logo-tc.webp') }}" alt="Tax Center"
                          class="h-12 w-auto object-contain brightness-0 invert opacity-80">
                     <div class="hidden" id="tc-text-fallback">
                         <span class="font-display text-white text-xl tracking-wider">TAX CENTER</span>
@@ -1112,9 +1128,16 @@
 
         <div class="flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-5">
-                <img src="/images/logo-uin.png" alt="UIN" class="h-8 w-auto brightness-0 invert opacity-25"
+                <img src="/images/logo-uin.webp" alt="UIN" class="h-8 w-auto brightness-0 invert opacity-20"
                      onerror="this.style.display='none'">
-                <img src="/images/logo-djp.png" alt="DJP" class="h-7 w-auto brightness-0 invert opacity-25"
+                <div class="w-px h-6 bg-white/10"></div>
+                <img src="/images/logo-tc.webp" alt="Tax Center" class="h-8 w-auto brightness-0 invert opacity-20"
+                     onerror="this.style.display='none'">
+                <div class="w-px h-6 bg-white/10"></div>
+                <img src="/images/logo-djp.webp" alt="DJP" class="h-7 w-auto brightness-0 invert opacity-20"
+                     onerror="this.style.display='none'">
+                <div class="w-px h-6 bg-white/10"></div>
+                <img src="/images/logo-atpi.webp" alt="ATPI" class="h-7 w-auto brightness-0 invert opacity-20"
                      onerror="this.style.display='none'">
             </div>
             <p class="text-white/20 text-[11px] tracking-wider uppercase text-center">
@@ -1141,27 +1164,24 @@
 
         <div class="rounded-b-[28px] overflow-hidden" style="background: #1A3365;">
             <!-- Header -->
-            <div class="px-10 pt-10 pb-8 text-center relative">
+            <div class="px-8 pt-8 pb-6 text-center relative">
                 <div class="absolute inset-0 opacity-10"
                      style="background: radial-gradient(circle at 50% 0%, #FFBB00 0%, transparent 65%);"></div>
                 <div class="relative">
-                    <div class="flex items-center justify-center gap-4 mb-7">
-                        <img src="{{ asset('images/logo-uin.png') }}" alt="UIN"
+                    <div class="flex items-center justify-center gap-4 mb-5">
+                        <img src="{{ asset('images/logo-uin.webp') }}" alt="UIN"
                              class="h-9 w-auto object-contain brightness-0 invert opacity-75">
-                        <div class="w-px h-9 bg-white/15"></div>
-                        <img src="{{ asset('images/logo-tc.png') }}" alt="Tax Center"
+                        <div class="w-px h-8 bg-white/15"></div>
+                        <img src="{{ asset('images/logo-tc.webp') }}" alt="Tax Center"
                              class="h-10 w-auto object-contain brightness-0 invert opacity-75">
-                        <div class="w-px h-9 bg-white/15"></div>
-                        <img src="{{ asset('images/logo-djp.png') }}" alt="DJP"
-                             class="h-8 w-auto object-contain brightness-0 invert opacity-75">
                     </div>
-                    <h3 class="font-display text-[28px] text-white tracking-wide">PORTAL LMS</h3>
+                    <h3 class="font-display text-[24px] text-white tracking-wide">PORTAL LMS</h3>
                     <p class="text-gold/60 text-[10px] font-bold tracking-[0.3em] uppercase mt-1">Member Only Access</p>
                 </div>
             </div>
 
             <!-- Form -->
-            <div class="px-10 pb-10">
+            <div class="px-8 pb-8">
                 @if(session('error'))
                 <div class="mb-5 p-4 rounded-xl flex items-center gap-3 shake"
                      style="background: rgba(255,67,67,0.1); border: 1px solid rgba(255,67,67,0.3);">
@@ -1217,10 +1237,10 @@
 
                 <p class="text-center text-[12px]" style="color: rgba(255,255,255,0.3);">
                     Belum punya akun atau lupa password?
-                    <a href="https://forms.gle/bcJJc1rbRRR8y6vX6" target="_blank"
+                    <a href="https://wa.me/6289637014638" target="_blank"
                        class="font-semibold ml-1 transition" style="color: rgba(255,187,0,0.7);"
                        onmouseover="this.style.color='#FFBB00'" onmouseout="this.style.color='rgba(255,187,0,0.7)'">
-                        Hubungi Admin
+                        Pusat Bantuan
                     </a>
                 </p>
             </div>
@@ -1273,6 +1293,17 @@
         icon.classList.toggle('fa-bars');
         icon.classList.toggle('fa-times');
     }
+
+    // Close mobile menu on outside click
+    document.addEventListener('click', function(e) {
+        const menu = document.getElementById('mobileMenu');
+        const btn = document.querySelector('button[onclick="toggleMobileMenu()"]');
+        if (menu && !menu.classList.contains('hidden')) {
+            if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                toggleMobileMenu();
+            }
+        }
+    });
 
     // Password toggle
     function togglePassword() {
@@ -1375,7 +1406,7 @@
             <div class="w-12 h-1 bg-gold/40 rounded-full mb-5"></div>
             <p class="text-white/60 text-sm leading-relaxed mb-6">${d.desc}</p>
             <div class="flex flex-wrap gap-2 mb-7">${d.tags.map(t => `<span class="text-[10px] bg-gold/10 text-gold font-bold px-3 py-1.5 rounded-full border border-gold/20">${t}</span>`).join('')}</div>
-            <a href="https://wa.me/6281234567890" target="_blank" class="inline-flex items-center gap-3 bg-gold hover:bg-yellow-300 text-navy font-bold px-6 py-3 rounded-xl text-sm transition-all hover:-translate-y-0.5">
+            <a href="https://wa.me/6289637014638" target="_blank" class="inline-flex items-center gap-3 bg-gold hover:bg-yellow-300 text-navy font-bold px-6 py-3 rounded-xl text-sm transition-all hover:-translate-y-0.5">
                 <i class="fab fa-whatsapp"></i> ${d.cta}
             </a>
         `;
