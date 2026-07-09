@@ -97,7 +97,7 @@ class AuthController extends Controller
 
         } catch (\Exception $e) {
             \Log::error('Login connection error: ' . $e->getMessage(), ['exception' => $e]);
-            return back()->with('error', 'Terjadi kesalahan sistem saat memproses login. Silakan hubungi Administrator.');
+            return back()->with('error', 'Terjadi kesalahan sistem saat memproses login: ' . $e->getMessage());
         }
     }
 
