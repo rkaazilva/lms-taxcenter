@@ -49,9 +49,26 @@
         .nav-links a.btn-gold { background: var(--gold); color: var(--navy); font-weight: 700; border-radius: 10px; }
         .nav-links a.btn-gold:hover { background: #e6a800; }
 
+        /* Mobile Navbar */
+        .mobile-toggle { display: none; background: transparent; border: none; color: white; font-size: 24px; cursor: pointer; }
+        @media(max-width: 768px) {
+            .mobile-toggle { display: block; }
+            .nav-links { 
+                position: absolute; top: 64px; left: 0; right: 0; background: var(--navy); 
+                flex-direction: column; padding: 20px; gap: 15px; 
+                border-top: 1px solid rgba(255,255,255,0.1);
+                display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            }
+            .nav-links.active { display: flex; }
+            .nav-links a { width: 100%; text-align: center; font-size: 15px; padding: 12px; }
+        }
+
         /* ─── HERO ─── */
         .article-hero {
             position: relative; height: 460px; overflow: hidden; background: var(--navy);
+        }
+        @media(max-width:768px) {
+            .article-hero { height: 320px; }
         }
         .article-hero img { width: 100%; height: 100%; object-fit: cover; opacity: 0.45; }
         .article-hero-overlay {
@@ -320,7 +337,10 @@
         <img src="{{ asset('images/logo-tc.webp') }}" alt="Tax Center">
         <span class="nav-brand">TAX CENTER</span>
     </a>
-    <div class="nav-links">
+    <button class="mobile-toggle" onclick="toggleMobileNav()">
+        <i class="fas fa-bars" id="mobile-icon"></i>
+    </button>
+    <div class="nav-links" id="navLinks">
         <a href="{{ route('login') }}">Beranda</a>
         <a href="{{ route('artikel.index') }}" style="color:white;">Artikel</a>
         <a href="{{ route('login') }}" class="btn-gold">Masuk LMS</a>
@@ -537,6 +557,18 @@ function copyLink() {
             if (btnSide) btnSide.style.background = '';
         }, 2500);
     });
+}
+
+// ─── Mobile Nav Toggle ───
+function toggleMobileNav() {
+    const nav = document.getElementById('navLinks');
+    const icon = document.getElementById('mobile-icon');
+    nav.classList.toggle('active');
+    if(nav.classList.contains('active')) {
+        icon.classList.replace('fa-bars', 'fa-times');
+    } else {
+        icon.classList.replace('fa-times', 'fa-bars');
+    }
 }
 </script>
 </body>
