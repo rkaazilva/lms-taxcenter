@@ -122,14 +122,6 @@
             gap: 32px;
             align-items: start;
         }
-        @media(max-width:1024px) { 
-            .page-layout { grid-template-columns: 1fr 280px; }
-            .social-share-bar { display: none; }
-        }
-        @media(max-width:768px) {
-            .page-layout { grid-template-columns: 1fr; padding: 20px 16px 60px; }
-            .sidebar { display: none; }
-        }
 
         /* ─── SOCIAL SHARE BAR (LEFT VERTICAL) ─── */
         .social-share-bar {
@@ -308,6 +300,16 @@
             padding: 9px 16px; border-radius: 10px; text-decoration: none; transition: all 0.2s;
         }
         .about-card-btn:hover { background: #e6a800; transform: translateY(-1px); }
+
+        /* ─── RESPONSIVE LAYOUT MEDIA QUERIES ─── */
+        @media(max-width:1024px) { 
+            .page-layout { grid-template-columns: 1fr 280px; }
+            .social-share-bar { display: none !important; }
+        }
+        @media(max-width:768px) {
+            .page-layout { grid-template-columns: 1fr; padding: 20px 16px 60px; }
+            .sidebar { display: none !important; }
+        }
 
         /* ─── FOOTER ─── */
         footer { background: var(--navy); color: rgba(255,255,255,0.4); text-align: center; padding: 28px; font-size: 12px; }
