@@ -147,3 +147,13 @@ Route::get('/run-migration-safe', function () {
         return "Gagal menjalankan migrasi: " . $e->getMessage();
     }
 });
+
+// ROUTE STORAGE LINK UNTUK PRODUCTION (Bisa diakses langsung saat deploy)
+Route::get('/run-storage-link', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('storage:link');
+        return "Storage Link Berhasil Dibuat! <br><a href='/'>Kembali ke Home</a>";
+    } catch (\Exception $e) {
+        return "Gagal membuat storage link: " . $e->getMessage();
+    }
+});
