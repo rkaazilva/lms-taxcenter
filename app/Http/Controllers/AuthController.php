@@ -36,20 +36,47 @@ class AuthController extends Controller
         $password = trim($request->password);
 
         try {
-            // 1. Cek di database lokal terlebih dahulu
+            // Cek di database lokal terlebih dahulu
             $user = \App\Models\LmsUser::findByEmail($email);
 
-            // Jika tidak ditemukan secara lokal atau password salah (dicek via Hash::check), lakukan sinkronisasi on-demand dari Google Sheets
-            if (!$user || !\Illuminate\Support\Facades\Hash::check($password, $user->password)) {
+            // Cek apakah password benar (aman terhadap plain text transisi)
+            $isCorrect = false;
+            if ($user) {
+                if (strpos($user->password, '$2y$') === 0 && strlen($user->password) === 60) {
+                    $isCorrect = \Illuminate\Support\Facades\Hash::check($password, $user->password);
+                } else {
+                    $isCorrect = ($user->password === $password);
+                    if ($isCorrect) {
+                        // Upgrade ke bcrypt di SQLite lokal
+                        $user->password = \Illuminate\Support\Facades\Hash::make($password);
+                        $user->save();
+                    }
+                }
+            }
+
+            // Jika tidak ditemukan secara lokal atau password salah, lakukan sinkronisasi on-demand dari Google Sheets
+            if (!$user || !$isCorrect) {
                 $gs = new \App\Services\GoogleSheetService();
                 $gs->syncLmsUsers();
                 
                 // Cek ulang database lokal setelah sinkronisasi
                 $user = \App\Models\LmsUser::findByEmail($email);
+                
+                if ($user) {
+                    if (strpos($user->password, '$2y$') === 0 && strlen($user->password) === 60) {
+                        $isCorrect = \Illuminate\Support\Facades\Hash::check($password, $user->password);
+                    } else {
+                        $isCorrect = ($user->password === $password);
+                        if ($isCorrect) {
+                            $user->password = \Illuminate\Support\Facades\Hash::make($password);
+                            $user->save();
+                        }
+                    }
+                }
             }
 
             // 2. Verifikasi final credentials
-            if ($user && \Illuminate\Support\Facades\Hash::check($password, $user->password)) {
+            if ($user && $isCorrect) {
                 $role = strtoupper($user->role);
                 $nama = $user->nama;
 
