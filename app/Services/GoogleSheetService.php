@@ -572,7 +572,12 @@ class GoogleSheetService
             $response = Http::retry(2, 100)->timeout(12)->post($this->apiUrl, $payload);
 
             if ($response->successful()) {
-                return $response->json() ?? ['status' => 'error', 'message' => 'Respons kosong'];
+                $result = $response->json() ?? ['status' => 'error', 'message' => 'Respons kosong'];
+                if (isset($result['status']) && $result['status'] === 'success') {
+                    $this->clearAllCache();
+                    Log::info("[GoogleSheetService] Local cache cleared automatically after successful post action: {$payload['action']}");
+                }
+                return $result;
             }
 
             Log::error("[GoogleSheetService] POST {$payload['action']} - HTTP Error: " . $response->status());
