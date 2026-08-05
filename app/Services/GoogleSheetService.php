@@ -562,6 +562,17 @@ class GoogleSheetService
         }
     }
 
+    public function forgetAllCacheKeys(): void
+    {
+        Cache::forget('lms_jadwal');
+        Cache::forget('lms_materi');
+        Cache::forget('lms_tugas');
+        Cache::forget('lms_matakuliah');
+        Cache::forget('lms_submissions');
+        Cache::forget('lms_siswa_list');
+        Cache::forget('lms_absensi');
+    }
+
     public function postToApi(array $payload): array
     {
         try {
@@ -574,8 +585,8 @@ class GoogleSheetService
             if ($response->successful()) {
                 $result = $response->json() ?? ['status' => 'error', 'message' => 'Respons kosong'];
                 if (isset($result['status']) && $result['status'] === 'success') {
-                    $this->clearAllCache();
-                    Log::info("[GoogleSheetService] Local cache cleared automatically after successful post action: {$payload['action']}");
+                    $this->forgetAllCacheKeys();
+                    Log::info("[GoogleSheetService] Local cache keys cleared instantly after successful post action: {$payload['action']}");
                 }
                 return $result;
             }

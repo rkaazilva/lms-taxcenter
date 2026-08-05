@@ -174,8 +174,6 @@ class AdminLmsController extends Controller
         ]);
 
         if ($result['status'] === 'success') {
-            $this->gs->clearAllCache();
-            
             // Create system notification for students
             Notification::create([
                 'email' => 'SISWA',
