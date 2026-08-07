@@ -33,6 +33,82 @@ class GoogleSheetService
         return (int) env('LMS_SUBMISSIONS_TTL', 120); // 2 menit default
     }
 
+    /**
+     * Normalisasi nama mata pelajaran agar variasi/singkatan/studi kasus (misal: "ujian 1", "KUP", "PPh OP")
+     * terpetakan secara sempurna ke nama resmi 12 mata pelajaran Brevet.
+     */
+    public static function normalizeMapelName(?string $mapel): string
+    {
+        if (empty($mapel)) return '';
+        $mapel = trim($mapel);
+
+        $daftarMapel = [
+            "Ketentuan Umum dan Tata Cara Perpajakan (KUP) A & B",
+            "Pajak Penghasilan (PPh) Orang Pribadi",
+            "Pajak Pemotongan dan Pemungutan (PPh Pasal 21)",
+            "Pajak Pemotongan dan Pemungutan (PPh Pasal 22, 23, 26, & 4(2))",
+            "Pajak Penghasilan (PPh) Badan",
+            "Pajak Pertambahan Nilai (PPN) dan PPnBM A & B",
+            "Pajak Bumi dan Bangunan (PBB), BPHTB, & Bea Meterai",
+            "Akuntansi Perpajakan",
+            "Pemeriksaan dan Penyidikan Pajak",
+            "Pengisian e-SPT / Aplikasi Perpajakan (e-Faktur, dll)",
+            "Tax Planning (Perencanaan Pajak)",
+            "Ujian Kelulusan / Komprehensif Brevet"
+        ];
+
+        if (in_array($mapel, $daftarMapel)) {
+            return $mapel;
+        }
+
+        $lower = strtolower($mapel);
+
+        if (strpos($lower, 'ujian') !== false || strpos($lower, 'komprehensif') !== false) {
+            return "Ujian Kelulusan / Komprehensif Brevet";
+        }
+        if (strpos($lower, 'kup') !== false || strpos($lower, 'ketentuan umum') !== false) {
+            return "Ketentuan Umum dan Tata Cara Perpajakan (KUP) A & B";
+        }
+        if (strpos($lower, 'pph op') !== false || strpos($lower, 'orang pribadi') !== false) {
+            return "Pajak Penghasilan (PPh) Orang Pribadi";
+        }
+        if (strpos($lower, 'pph 21') !== false || strpos($lower, 'pasal 21') !== false) {
+            return "Pajak Pemotongan dan Pemungutan (PPh Pasal 21)";
+        }
+        if (strpos($lower, 'pph 22') !== false || strpos($lower, 'pasal 22') !== false || strpos($lower, 'pph 23') !== false || strpos($lower, 'pasal 23') !== false || strpos($lower, '4(2)') !== false) {
+            return "Pajak Pemotongan dan Pemungutan (PPh Pasal 22, 23, 26, & 4(2))";
+        }
+        if (strpos($lower, 'pph badan') !== false || strpos($lower, 'badan') !== false) {
+            return "Pajak Penghasilan (PPh) Badan";
+        }
+        if (strpos($lower, 'ppn') !== false || strpos($lower, 'ppnbm') !== false) {
+            return "Pajak Pertambahan Nilai (PPN) dan PPnBM A & B";
+        }
+        if (strpos($lower, 'pbb') !== false || strpos($lower, 'bphtb') !== false || strpos($lower, 'bea meterai') !== false) {
+            return "Pajak Bumi dan Bangunan (PBB), BPHTB, & Bea Meterai";
+        }
+        if (strpos($lower, 'akuntansi') !== false) {
+            return "Akuntansi Perpajakan";
+        }
+        if (strpos($lower, 'pemeriksaan') !== false || strpos($lower, 'penyidikan') !== false) {
+            return "Pemeriksaan dan Penyidikan Pajak";
+        }
+        if (strpos($lower, 'espt') !== false || strpos($lower, 'e-spt') !== false || strpos($lower, 'efaktur') !== false || strpos($lower, 'e-faktur') !== false) {
+            return "Pengisian e-SPT / Aplikasi Perpajakan (e-Faktur, dll)";
+        }
+        if (strpos($lower, 'tax planning') !== false || strpos($lower, 'perencanaan') !== false) {
+            return "Tax Planning (Perencanaan Pajak)";
+        }
+
+        foreach ($daftarMapel as $m) {
+            if (strcasecmp($m, $mapel) === 0) {
+                return $m;
+            }
+        }
+
+        return $mapel;
+    }
+
     // ============================================================
     // GET REQUESTS (Dengan Smart Caching)
     // ============================================================

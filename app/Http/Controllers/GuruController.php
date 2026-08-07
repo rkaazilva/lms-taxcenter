@@ -163,7 +163,7 @@ class GuruController extends Controller
         $materiCounts = [];
         foreach (is_array($allMateri) ? $allMateri : [] as $m) {
             if (is_array($m)) {
-                $mapelName = trim($m['mapel'] ?? '');
+                $mapelName = \App\Services\GoogleSheetService::normalizeMapelName($m['mapel'] ?? '');
                 if ($mapelName) {
                     if (!isset($materiCounts[$mapelName])) {
                         $materiCounts[$mapelName] = 0;
@@ -183,18 +183,7 @@ class GuruController extends Controller
         foreach ($absensi as $a) {
             $email = strtolower(trim($a['email'] ?? ''));
             $mapelRaw = trim($a['mapel'] ?? '');
-            
-            // Normalize mapel to match jadwalKhusus more robustly
-            $mapel = $mapelRaw;
-            foreach ($jadwalKhusus as $j) {
-                $jMapel = trim($j['mapel'] ?? $j['subject'] ?? '');
-                // Simple substring match (e.g. "Ketentuan Umum" matches "Ketentuan Umum dan Tata Cara...")
-                if ($jMapel && $mapelRaw && (stripos($jMapel, $mapelRaw) !== false || stripos($mapelRaw, $jMapel) !== false)) {
-                    $mapel = $jMapel;
-                    break;
-                }
-            }
-
+            $mapel = \App\Services\GoogleSheetService::normalizeMapelName($mapelRaw);
             $timestamp = trim($a['timestamp'] ?? '');
             
             if ($email && $mapel && $timestamp) {

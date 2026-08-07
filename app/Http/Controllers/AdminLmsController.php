@@ -65,7 +65,7 @@ class AdminLmsController extends Controller
         $materiCounts = [];
         foreach (is_array($materi) ? $materi : [] as $m) {
             if (is_array($m)) {
-                $mapelName = trim($m['mapel'] ?? '');
+                $mapelName = GoogleSheetService::normalizeMapelName($m['mapel'] ?? '');
                 if ($mapelName) {
                     if (!isset($materiCounts[$mapelName])) {
                         $materiCounts[$mapelName] = 0;
@@ -84,7 +84,8 @@ class AdminLmsController extends Controller
         $siswaAbsensiMap = [];
         foreach (is_array($absensi) ? $absensi : [] as $a) {
             $email = strtolower(trim($a['email'] ?? ''));
-            $mapel = trim($a['mapel'] ?? '');
+            $mapelRaw = trim($a['mapel'] ?? '');
+            $mapel = GoogleSheetService::normalizeMapelName($mapelRaw);
             $timestamp = trim($a['timestamp'] ?? '');
             
             if ($email && $mapel && $timestamp) {
@@ -365,7 +366,7 @@ class AdminLmsController extends Controller
         $materiCounts = [];
         foreach (is_array($allMateri) ? $allMateri : [] as $m) {
             if (is_array($m)) {
-                $mapelName = trim($m['mapel'] ?? '');
+                $mapelName = GoogleSheetService::normalizeMapelName($m['mapel'] ?? '');
                 if ($mapelName) {
                     if (!isset($materiCounts[$mapelName])) {
                         $materiCounts[$mapelName] = 0;
@@ -384,7 +385,8 @@ class AdminLmsController extends Controller
         $siswaAbsensiMap = [];
         foreach ($absensi as $a) {
             $email = strtolower(trim($a['email'] ?? ''));
-            $mapel = trim($a['mapel'] ?? '');
+            $mapelRaw = trim($a['mapel'] ?? '');
+            $mapel = GoogleSheetService::normalizeMapelName($mapelRaw);
             $timestamp = trim($a['timestamp'] ?? '');
             
             if ($email && $mapel && $timestamp) {
