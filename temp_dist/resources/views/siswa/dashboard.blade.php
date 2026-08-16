@@ -816,7 +816,7 @@
                 let linkHtml = '';
                 if (item.link) {
                     linkHtml = `
-                        <a href="${item.link}" target="_blank" onclick="catatAbsenLive(event, '${item.materi}', '${item.link}')" class="mt-4 inline-flex items-center justify-center gap-2 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-black py-3 px-6 rounded-2xl shadow-lg hover:shadow-amber-400/20 hover:scale-[1.02] transition-all duration-200 w-full sm:w-auto">
+                        <a href="${item.link}" target="_blank" onclick="catatAbsenLive(event, '${item.mapel}', '${item.link}')" class="mt-4 inline-flex items-center justify-center gap-2 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-black py-3 px-6 rounded-2xl shadow-lg hover:shadow-amber-400/20 hover:scale-[1.02] transition-all duration-200 w-full sm:w-auto">
                             <i class="fas fa-video text-xs animate-pulse"></i> Hubungkan ke Live Zoom
                         </a>
                     `;
@@ -876,7 +876,7 @@
                 let linkHtml = '';
                 if (item.link) {
                     linkHtml = `
-                        <a href="${item.link}" target="_blank" onclick="catatAbsenLive(event, '${item.materi}', '${item.link}')" class="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 text-xs font-bold py-2 px-4 rounded-xl border border-blue-100 transition duration-200 shadow-sm whitespace-nowrap">
+                        <a href="${item.link}" target="_blank" onclick="catatAbsenLive(event, '${item.mapel}', '${item.link}')" class="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 text-xs font-bold py-2 px-4 rounded-xl border border-blue-100 transition duration-200 shadow-sm whitespace-nowrap">
                             <i class="fas fa-video"></i> Join Class
                         </a>
                     `;

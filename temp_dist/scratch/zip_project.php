@@ -13,7 +13,7 @@ if (file_exists($zipPath)) {
     unlink($zipPath);
 }
 
-mkdir($tempDir, 0777, true);
+@mkdir($tempDir, 0777, true);
 
 // 2. Copy files recursively excluding git, node_modules, temp, .env, and db
 $excludeList = ['.git', 'node_modules', 'temp_dist', '.env', '.phpunit.result.cache', 'lms-taxcenter-dist-with-vendor.zip', 'lms-taxcenter-dist.zip', 'update-lms-fixed.zip', 'lms-taxcenter-update.zip'];
@@ -48,14 +48,14 @@ foreach ($iterator as $item) {
     
     if ($item->isDir()) {
         if (!file_exists($destPath)) {
-            mkdir($destPath, 0777, true);
+            @mkdir($destPath, 0777, true);
         }
-    } else {
+    } elseif ($item->isFile()) {
         $parentDir = dirname($destPath);
         if (!file_exists($parentDir)) {
-            mkdir($parentDir, 0777, true);
+            @mkdir($parentDir, 0777, true);
         }
-        copy($item->getPathname(), $destPath);
+        @copy($item->getPathname(), $destPath);
     }
 }
 
@@ -90,10 +90,13 @@ deleteDirectory($tempDir);
 // Helper function to recursively delete directory
 function deleteDirectory($dir) {
     if (!file_exists($dir)) return true;
-    if (!is_dir($dir)) return unlink($dir);
-    foreach (scandir($dir) as $item) {
-        if ($item == '.' || $item == '..') continue;
-        if (!deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)) return false;
+    if (!is_dir($dir)) return @unlink($dir);
+    $scan = @scandir($dir);
+    if (!is_array($scan)) return true;
+    $items = array_diff($scan, ['.', '..']);
+    foreach ($items as $item) {
+        $path = $dir . DIRECTORY_SEPARATOR . $item;
+        is_dir($path) ? deleteDirectory($path) : @unlink($path);
     }
-    return rmdir($dir);
+    return @rmdir($dir);
 }

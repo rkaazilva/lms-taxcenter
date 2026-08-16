@@ -209,7 +209,8 @@ class GuruController extends Controller
         // Build dynamic mapel list from schedule
         $daftarMapelRaw = [];
         foreach ($jadwalKhusus as $j) {
-            $m = trim($j['mapel'] ?? $j['subject'] ?? $j['materi'] ?? '');
+            $mRaw = trim($j['mapel'] ?? $j['subject'] ?? '');
+            $m = \App\Services\GoogleSheetService::normalizeMapelName($mRaw);
             if ($m) {
                 $daftarMapelRaw[] = $m;
             }
@@ -217,8 +218,20 @@ class GuruController extends Controller
         // Build dynamic mapel list prioritizing official guru subjects
         $daftarMapel = !empty($guruMapel) ? $guruMapel : array_values(array_unique($daftarMapelRaw));
         if (empty($daftarMapel)) {
-            // Fallback just in case
-            $daftarMapel = ["Ketentuan Umum dan Tata Cara Perpajakan (KUP) A & B", "Pajak Penghasilan (PPh) Orang Pribadi"];
+            $daftarMapel = [
+                "Ketentuan Umum dan Tata Cara Perpajakan (KUP) A & B",
+                "Pajak Penghasilan (PPh) Orang Pribadi",
+                "Pajak Pemotongan dan Pemungutan (PPh Pasal 21)",
+                "Pajak Pemotongan dan Pemungutan (PPh Pasal 22, 23, 26, & 4(2))",
+                "Pajak Penghasilan (PPh) Badan",
+                "Pajak Pertambahan Nilai (PPN) dan PPnBM A & B",
+                "Pajak Bumi dan Bangunan (PBB), BPHTB, & Bea Meterai",
+                "Akuntansi Perpajakan",
+                "Pemeriksaan dan Penyidikan Pajak",
+                "Pengisian e-SPT / Aplikasi Perpajakan (e-Faktur, dll)",
+                "Tax Planning (Perencanaan Pajak)",
+                "Ujian Kelulusan / Komprehensif Brevet"
+            ];
         }
 
         $mapelAbbreviations = [
