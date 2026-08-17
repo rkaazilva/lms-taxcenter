@@ -110,7 +110,7 @@
         <!-- Card 3 -->
         <div class="glass-card p-6 rounded-3xl shadow-sm hover-scale flex items-center justify-between">
             <div>
-                <p class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Tugas Kuliah</p>
+                <p class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Tugas Pelatihan</p>
                 <p class="text-3xl font-extrabold text-amber-950 mt-1">{{ $totalTugas }}</p>
                 <p class="text-gray-400 text-[10px] mt-1.5 font-medium">Tugas didefinisikan tutor</p>
             </div>

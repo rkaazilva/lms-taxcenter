@@ -27,7 +27,7 @@
                 <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Task Management</span>
             </div>
             <h2 class="text-2xl font-bold text-gray-900">Manajemen Tugas Pembelajaran 📝</h2>
-            <p class="text-gray-500 text-xs mt-1">Pantau rincian tugas kuliah yang dibuat oleh tutor/dosen beserta batas waktu deadline.</p>
+            <p class="text-gray-500 text-xs mt-1">Pantau rincian tugas pelatihan yang dibuat oleh tutor/dosen beserta batas waktu deadline.</p>
         </div>
         <div>
             <a href="{{ route('admin-lms.index') }}" class="w-full sm:w-auto text-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl transition text-xs font-bold flex items-center justify-center gap-2">
@@ -134,7 +134,7 @@
                 <div class="w-16 h-16 rounded-full bg-gray-50 text-gray-300 flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-clipboard-list-check text-2xl"></i>
                 </div>
-                <p class="text-gray-500 text-xs md:text-sm font-medium">Belum ada tugas kuliah terdata.</p>
+                <p class="text-gray-500 text-xs md:text-sm font-medium">Belum ada tugas pelatihan terdata.</p>
                 <p class="text-gray-400 text-[10px] mt-1">Tugas dibuat dan dikelola oleh guru/tutor secara langsung melalui Panel Guru.</p>
             </div>
         @endif

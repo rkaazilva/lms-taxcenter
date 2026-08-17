@@ -228,7 +228,7 @@
     <div id="tab-content-materi" class="tab-pane hidden space-y-6">
         <div class="flex items-center justify-between">
             <div>
-                <h3 class="text-xl font-bold text-gray-800">Materi & Modul Kuliah</h3>
+                <h3 class="text-xl font-bold text-gray-800">Materi & Modul Pelatihan</h3>
                 <p class="text-xs text-gray-405 mt-0.5">Unduh PDF materi dan tonton rekaman pembelajaran kapan saja</p>
             </div>
             <span class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-bold">12 Mata Pelajaran</span>

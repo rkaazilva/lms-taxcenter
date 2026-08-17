@@ -27,7 +27,7 @@
                 <span class="text-xs font-bold text-violet-650 uppercase tracking-widest">Schedule Management</span>
             </div>
             <h2 class="text-2xl font-bold text-gray-900">Manajemen Jadwal Kelas 🗓️</h2>
-            <p class="text-gray-500 text-xs mt-1">Tambahkan sesi kuliah baru, perbarui tautan Zoom, nama dosen, atau hapus sesi dari Google Sheets.</p>
+            <p class="text-gray-500 text-xs mt-1">Tambahkan sesi pelatihan baru, perbarui tautan Zoom, nama dosen, atau hapus sesi dari Google Sheets.</p>
         </div>
         <div class="flex gap-2 w-full sm:w-auto">
             <a href="{{ route('admin-lms.index') }}" class="flex-1 sm:flex-initial text-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl transition text-xs font-bold flex items-center justify-center gap-2">
@@ -140,7 +140,7 @@
                 <div class="w-16 h-16 rounded-full bg-gray-50 text-gray-300 flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-calendar-alt text-2xl"></i>
                 </div>
-                <p class="text-gray-500 text-xs md:text-sm font-medium">Belum ada sesi jadwal kuliah aktif.</p>
+                <p class="text-gray-500 text-xs md:text-sm font-medium">Belum ada sesi jadwal pelatihan aktif.</p>
                 <button onclick="openJadwalModal()" class="mt-3 inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-xl transition text-xs font-bold">
                     Tambah Jadwal Sekarang
                 </button>
@@ -173,7 +173,7 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Tanggal Kuliah</label>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Tanggal Pelatihan</label>
                     <input type="date" name="tanggal" required class="w-full rounded-xl border-gray-200 shadow-sm p-3 border text-xs focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition">
                 </div>
                 <div>
@@ -184,7 +184,7 @@
 
             <div class="grid grid-cols-1 gap-4">
                 <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Mata Pelajaran / Mata Kuliah</label>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Mata Pelajaran / Pelatihan</label>
                     @php
                         $daftarMapel = [
                             "Ketentuan Umum dan Tata Cara Perpajakan (KUP) A & B",

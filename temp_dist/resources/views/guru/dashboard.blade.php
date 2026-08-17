@@ -55,7 +55,7 @@
         <div class="absolute -right-20 -top-20 w-64 h-64 bg-emerald-400 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
         <div class="relative z-10">
             <h2 class="text-2xl font-bold mb-2">Selamat datang di Panel Guru, {{ session('nama', 'Dosen') }}! 👋</h2>
-            <p class="text-emerald-100 text-xs leading-relaxed max-w-lg">Panel ini didesain khusus untuk memudahkan Bapak/Ibu Dosen dalam mengunggah modul kuliah (PDF), membagikan link video rekaman Youtube, serta membuat daftar tugas secara dinamis.</p>
+            <p class="text-emerald-100 text-xs leading-relaxed max-w-lg">Panel ini didesain khusus untuk memudahkan Bapak/Ibu Dosen dalam mengunggah modul pelatihan (PDF), membagikan link video rekaman Youtube, serta membuat daftar tugas secara dinamis.</p>
         </div>
     </div>
     

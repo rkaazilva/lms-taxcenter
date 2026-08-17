@@ -179,7 +179,7 @@
                         <i class="fas fa-calendar-alt w-4 text-center text-xs"></i> Jadwal Kelas
                     </a>
                     <a href="{{ url('/siswa/dashboard?tab=materi') }}" data-tab="materi" class="sidebar-link flex items-center gap-3 p-3 rounded-xl {{ request('tab') == 'materi' ? $themeMenuActive : $themeMenuDefault . ' ' . $themeMenuHover }} transition font-bold text-xs">
-                        <i class="fas fa-book-open w-4 text-center text-xs"></i> Materi Kuliah
+                        <i class="fas fa-book-open w-4 text-center text-xs"></i> Materi Pelatihan
                     </a>
                     <a href="{{ url('/siswa/dashboard?tab=tugas') }}" data-tab="tugas" class="sidebar-link flex items-center gap-3 p-3 rounded-xl {{ request('tab') == 'tugas' ? $themeMenuActive : $themeMenuDefault . ' ' . $themeMenuHover }} transition font-bold text-xs">
                         <i class="fas fa-tasks w-4 text-center text-xs"></i> Tugas & Ujian
@@ -273,7 +273,7 @@
                         <i class="fas fa-calendar-alt w-4 text-center text-xs"></i> Jadwal Kelas
                     </a>
                     <a href="{{ url('/siswa/dashboard?tab=materi') }}" data-tab="materi" class="sidebar-link flex items-center gap-3 p-3 rounded-xl {{ request('tab') == 'materi' ? $themeMenuActive : $themeMenuDefault . ' ' . $themeMenuHover }} transition font-bold text-xs">
-                        <i class="fas fa-book-open w-4 text-center text-xs"></i> Materi Kuliah
+                        <i class="fas fa-book-open w-4 text-center text-xs"></i> Materi Pelatihan
                     </a>
                     <a href="{{ url('/siswa/dashboard?tab=tugas') }}" data-tab="tugas" class="sidebar-link flex items-center gap-3 p-3 rounded-xl {{ request('tab') == 'tugas' ? $themeMenuActive : $themeMenuDefault . ' ' . $themeMenuHover }} transition font-bold text-xs">
                         <i class="fas fa-tasks w-4 text-center text-xs"></i> Tugas & Ujian
@@ -296,7 +296,7 @@
                         <i class="fas fa-calendar-alt w-4 text-center text-xs"></i> Jadwal Kelas
                     </a>
                     <a href="{{ route('admin-lms.materi.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->is('admin-lms/materi*') ? $themeMenuActive : $themeMenuDefault . ' ' . $themeMenuHover }} transition font-bold text-xs">
-                        <i class="fas fa-video w-4 text-center text-xs"></i> Materi Kuliah
+                        <i class="fas fa-video w-4 text-center text-xs"></i> Materi Pelatihan
                     </a>
                     <a href="{{ route('admin-lms.tugas.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->is('admin-lms/tugas*') ? $themeMenuActive : $themeMenuDefault . ' ' . $themeMenuHover }} transition font-bold text-xs">
                         <i class="fas fa-clipboard-list w-4 text-center text-xs"></i> Manajemen Tugas
@@ -316,7 +316,7 @@
                         <i class="fas fa-home w-4 text-center text-xs"></i> Dashboard
                     </a>
                     <a href="{{ url('/guru/dashboard?tab=materi') }}" data-tab="materi" class="sidebar-link flex items-center gap-3 p-3 rounded-xl {{ request('tab') == 'materi' ? $themeMenuActive : $themeMenuDefault . ' ' . $themeMenuHover }} transition font-bold text-xs">
-                        <i class="fas fa-book-open w-4 text-center text-xs"></i> Materi Kuliah
+                        <i class="fas fa-book-open w-4 text-center text-xs"></i> Materi Pelatihan
                     </a>
                     <a href="{{ url('/guru/dashboard?tab=tugas') }}" data-tab="tugas" class="sidebar-link flex items-center gap-3 p-3 rounded-xl {{ request('tab') == 'tugas' ? $themeMenuActive : $themeMenuDefault . ' ' . $themeMenuHover }} transition font-bold text-xs">
                         <i class="fas fa-tasks w-4 text-center text-xs"></i> Tugas
