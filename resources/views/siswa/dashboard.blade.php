@@ -1209,6 +1209,26 @@
         countBadge.innerText = `${completedCount} Tugas Selesai`;
     }
 
+    function normalizeMapelJS(rawName) {
+        if (!rawName) return "";
+        const name = String(rawName).trim().toLowerCase();
+        
+        if (name.includes("kup")) return "Ketentuan Umum dan Tata Cara Perpajakan (KUP) A & B";
+        if (name.includes("orang pribadi") || name.includes("pph op")) return "Pajak Penghasilan (PPh) Orang Pribadi";
+        if (name.includes("21")) return "Pajak Pemotongan dan Pemungutan (PPh Pasal 21)";
+        if (name.includes("22") || name.includes("23") || name.includes("26") || name.includes("4(2)") || name.includes("4 (2)") || name.includes("potput")) return "Pajak Pemotongan dan Pemungutan (PPh Pasal 22, 23, 26, & 4(2))";
+        if (name.includes("badan")) return "Pajak Penghasilan (PPh) Badan";
+        if (name.includes("ppn") || name.includes("ppnbm")) return "Pajak Pertambahan Nilai (PPN) dan PPnBM A & B";
+        if (name.includes("pbb") || name.includes("bphtb") || name.includes("meterai") || name.includes("metrai")) return "Pajak Bumi dan Bangunan (PBB), BPHTB, & Bea Meterai";
+        if (name.includes("akuntansi")) return "Akuntansi Perpajakan";
+        if (name.includes("pemeriksaan") || name.includes("penyidikan")) return "Pemeriksaan dan Penyidikan Pajak";
+        if (name.includes("spt") || name.includes("faktur") || name.includes("efaktur") || name.includes("aplikasi")) return "Pengisian e-SPT / Aplikasi Perpajakan (e-Faktur, dll)";
+        if (name.includes("planning") || name.includes("perencanaan")) return "Tax Planning (Perencanaan Pajak)";
+        if (name.includes("ujian") || name.includes("komprehensif") || name.includes("kelulusan") || name.includes("simulasi")) return "Ujian Kelulusan / Komprehensif Brevet";
+
+        return rawName;
+    }
+
     function renderAbsensiTab(data) {
         const body = document.getElementById('absensi-table-body');
         const countText = document.getElementById('totalPresenceCount');
@@ -1245,17 +1265,17 @@
         const mapelMateriCounts = {};
         rawMateri.forEach(m => {
             if (m && m.mapel) {
-                const name = String(m.mapel).trim();
-                if (name) {
-                    if (!mapelMateriCounts[name]) {
-                        mapelMateriCounts[name] = 0;
+                const normName = normalizeMapelJS(m.mapel);
+                if (normName) {
+                    if (!mapelMateriCounts[normName]) {
+                        mapelMateriCounts[normName] = 0;
                     }
-                    mapelMateriCounts[name]++;
+                    mapelMateriCounts[normName]++;
                 }
             }
         });
         Object.keys(mapelMateriCounts).forEach(name => {
-            if (mapelMateriCounts[name] > 0) {
+            if (mapelMateriCounts[name] > 0 && mapelTargets[name] !== undefined) {
                 mapelTargets[name] = mapelMateriCounts[name];
             }
         });
@@ -1292,14 +1312,7 @@
         data.absensi.forEach(item => {
             if (!item || !item.timestamp || !item.mapel) return;
             
-            const mapelRaw = String(item.mapel).trim();
-            let mapel = mapelRaw;
-            for (const officialMapel of mapelList) {
-                if (officialMapel.toLowerCase().includes(mapelRaw.toLowerCase()) || mapelRaw.toLowerCase().includes(officialMapel.toLowerCase())) {
-                    mapel = officialMapel;
-                    break;
-                }
-            }
+            const mapel = normalizeMapelJS(item.mapel);
 
             const dateStr = item.timestamp.substring(0, 10); // YYYY-MM-DD
             const key = `${dateStr}_${mapel}`;
