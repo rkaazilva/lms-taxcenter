@@ -29,7 +29,10 @@
             <h2 class="text-2xl font-bold text-gray-900">Manajemen Tugas Pembelajaran 📝</h2>
             <p class="text-gray-500 text-xs mt-1">Pantau rincian tugas pelatihan yang dibuat oleh tutor/dosen beserta batas waktu deadline.</p>
         </div>
-        <div>
+        <div class="flex gap-2 w-full sm:w-auto">
+            <button onclick="exportTugasToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl transition text-xs font-bold flex items-center justify-center gap-2">
+                <i class="fas fa-file-excel"></i> Export Excel (.xlsx)
+            </button>
             <a href="{{ route('admin-lms.index') }}" class="w-full sm:w-auto text-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl transition text-xs font-bold flex items-center justify-center gap-2">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
@@ -140,4 +143,41 @@
         @endif
     </div>
 </div>
+
+<script>
+function exportTugasToExcel() {
+    const table = document.querySelector('table');
+    if (!table) return;
+
+    const dataRows = [
+        ["ID Tugas", "Mata Pelajaran", "Judul Tugas", "Deskripsi", "Batas Waktu", "Jumlah Pengumpulan"]
+    ];
+
+    const rows = table.querySelectorAll('tbody tr');
+    rows.forEach(tr => {
+        const tds = tr.querySelectorAll('td');
+        if (tds.length >= 6) {
+            dataRows.push([
+                tds[0].innerText.trim(),
+                tds[1].innerText.trim(),
+                tds[2].innerText.trim(),
+                tds[3].innerText.trim(),
+                tds[4].innerText.trim(),
+                tds[5].innerText.trim()
+            ]);
+        }
+    });
+
+    const dateStr = new Date().toISOString().slice(0,10);
+
+    if (typeof XLSX !== 'undefined') {
+        const ws = XLSX.utils.aoa_to_sheet(dataRows);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Daftar Tugas");
+        XLSX.writeFile(wb, `Data_Tugas_Pelatihan_${dateStr}.xlsx`);
+    } else {
+        alert('Library Excel belum siap.');
+    }
+}
+</script>
 @endsection

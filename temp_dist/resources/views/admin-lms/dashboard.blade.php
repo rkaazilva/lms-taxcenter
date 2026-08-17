@@ -44,10 +44,18 @@
             <h2 class="text-2xl md:text-3xl font-bold leading-tight">Panel Admin LMS</h2>
             <p class="text-violet-100 text-xs md:text-sm mt-1">Kelola jadwal pembelajaran, rekapitulasi materi, daftar tugas, dan sinkronisasi basis data.</p>
         </div>
-        <div class="relative z-10 flex items-center gap-3 w-full md:w-auto">
+        <div class="relative z-10 flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <button onclick="exportNilaiToExcel()" class="w-full md:w-auto flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-3 rounded-2xl font-bold text-xs shadow-md transition duration-200">
+                <i class="fas fa-file-excel"></i>
+                <span>Export Nilai (.xlsx)</span>
+            </button>
+            <button onclick="exportSiswaToExcel()" class="w-full md:w-auto flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-2xl font-bold text-xs shadow-md transition duration-200">
+                <i class="fas fa-users"></i>
+                <span>Export Siswa (.xlsx)</span>
+            </button>
             <button onclick="syncAllCache()" class="w-full md:w-auto flex items-center justify-center gap-2 bg-white text-violet-700 hover:bg-violet-50 px-5 py-3 rounded-2xl font-bold text-xs shadow-md shadow-violet-950/20 hover:shadow-lg transition duration-200 group border border-white/10">
                 <i class="fas fa-sync-alt group-hover:rotate-180 transition-transform duration-500"></i>
-                <span>Sinkronisasi Data Google</span>
+                <span>Sinkronisasi</span>
             </button>
         </div>
     </div>
@@ -782,6 +790,80 @@
                     popup: 'rounded-3xl'
                 }
             });
+        }
+    }
+
+    function exportNilaiToExcel() {
+        const table = document.querySelector('#submissionTable');
+        if (!table) {
+            alert('Tabel nilai belum tersedia.');
+            return;
+        }
+
+        const dataRows = [
+            ["Waktu Submit", "ID Tugas", "Email Siswa", "Nama Siswa", "Nilai", "Feedback", "Link File Tugas"]
+        ];
+
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(tr => {
+            const tds = tr.querySelectorAll('td');
+            if (tds.length >= 6) {
+                const fileLink = tds[5].querySelector('a') ? tds[5].querySelector('a').href : '-';
+                dataRows.push([
+                    tds[0].innerText.replace(/\n/g, ' ').trim(),
+                    tds[1].innerText.trim(),
+                    tds[2].innerText.trim(),
+                    tds[3].innerText.trim(),
+                    tds[4].innerText.trim(),
+                    tds[6] ? tds[6].innerText.trim() : '-',
+                    fileLink
+                ]);
+            }
+        });
+
+        const dateStr = new Date().toISOString().slice(0,10);
+
+        if (typeof XLSX !== 'undefined') {
+            const ws = XLSX.utils.aoa_to_sheet(dataRows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Rekap Nilai");
+            XLSX.writeFile(wb, `Rekap_Nilai_Submissions_${dateStr}.xlsx`);
+        } else {
+            alert('Library Excel belum siap.');
+        }
+    }
+
+    function exportSiswaToExcel() {
+        const siswaList = @json($siswaList ?? []);
+        if (!Array.isArray(siswaList) || siswaList.length === 0) {
+            alert('Daftar siswa kosong.');
+            return;
+        }
+
+        const dataRows = [
+            ["No", "Nama Siswa", "Email Siswa", "Kelas", "Nomor WhatsApp", "Sertifikat"]
+        ];
+
+        siswaList.forEach((s, idx) => {
+            dataRows.push([
+                idx + 1,
+                s.nama || '',
+                s.email || '',
+                s.kelas || '',
+                s.telepon || s.wa || '-',
+                s.sertifikat || '-'
+            ]);
+        });
+
+        const dateStr = new Date().toISOString().slice(0,10);
+
+        if (typeof XLSX !== 'undefined') {
+            const ws = XLSX.utils.aoa_to_sheet(dataRows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Daftar Siswa");
+            XLSX.writeFile(wb, `Daftar_Siswa_Brevet_${dateStr}.xlsx`);
+        } else {
+            alert('Library Excel belum siap.');
         }
     }
 </script>

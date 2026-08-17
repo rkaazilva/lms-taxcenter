@@ -36,9 +36,14 @@
         <h2 class="text-2xl font-bold text-gray-800">Kelola Akun Guru & Dosen</h2>
         <p class="text-sm text-gray-500 mt-1">Tambah, edit, hapus, atau nonaktifkan akun guru langsung dari database</p>
     </div>
-    <a href="{{ route('admin-lms.guru.create') }}" class="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition">
-        <i class="fas fa-plus"></i> Tambah Guru Baru
-    </a>
+    <div class="flex gap-2">
+        <button onclick="exportGuruToExcel()" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition text-xs">
+            <i class="fas fa-file-excel"></i> Export Excel (.xlsx)
+        </button>
+        <a href="{{ route('admin-lms.guru.create') }}" class="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition text-xs">
+            <i class="fas fa-plus"></i> Tambah Guru Baru
+        </a>
+    </div>
 </div>
 
 <!-- Tabel Daftar Guru -->
@@ -164,4 +169,39 @@
     </div>
 </div>
 
+<script>
+function exportGuruToExcel() {
+    const table = document.querySelector('table');
+    if (!table) return;
+
+    const dataRows = [
+        ["Email", "Nama Guru", "Mata Pelajaran", "Status", "Catatan"]
+    ];
+
+    const rows = table.querySelectorAll('tbody tr');
+    rows.forEach(tr => {
+        const tds = tr.querySelectorAll('td');
+        if (tds.length >= 5) {
+            dataRows.push([
+                tds[0].innerText.trim(),
+                tds[1].innerText.trim(),
+                tds[2].innerText.trim(),
+                tds[3].innerText.trim(),
+                tds[4].innerText.trim()
+            ]);
+        }
+    });
+
+    const dateStr = new Date().toISOString().slice(0,10);
+
+    if (typeof XLSX !== 'undefined') {
+        const ws = XLSX.utils.aoa_to_sheet(dataRows);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Daftar Guru");
+        XLSX.writeFile(wb, `Daftar_Guru_Tutor_${dateStr}.xlsx`);
+    } else {
+        alert('Library Excel belum siap.');
+    }
+}
+</script>
 @endsection

@@ -11,9 +11,12 @@
             <h3 class="text-xl font-bold text-gray-800">Rekapitulasi Kehadiran Siswa</h3>
             <p class="text-xs text-gray-500 mt-0.5">Pantau dan kelola kehadiran belajar peserta Brevet Pajak</p>
         </div>
-        <div class="flex gap-2">
-            <button onclick="downloadAbsensi()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition text-xs flex items-center gap-1.5">
-                <i class="fas fa-download"></i> Unduh Rekap (CSV)
+        <div class="flex flex-wrap gap-2">
+            <button onclick="downloadAbsensi()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition text-xs flex items-center gap-1.5">
+                <i class="fas fa-file-excel"></i> Export Matriks Excel (.xlsx)
+            </button>
+            <button onclick="downloadLogAbsensi()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition text-xs flex items-center gap-1.5">
+                <i class="fas fa-list-ol"></i> Export Log Detail (.xlsx)
             </button>
             <button onclick="openAbsenModal()" class="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition text-xs flex items-center gap-1.5">
                 <i class="fas fa-plus"></i> Input Absen Manual
@@ -216,10 +219,7 @@
             return;
         }
 
-        let csvContent = "\uFEFF"; // BOM for Excel encoding support
-
-        // CSV Header
-        const headers = ["Nama Siswa", "Email"];
+        const headers = ["Nama Siswa", "Email", "Kelas"];
         daftarMapel.forEach(m => {
             const target = mapelSessionCounts[m] || 0;
             if (target > 0) {
@@ -228,38 +228,84 @@
                 headers.push(m);
             }
         });
-        csvContent += headers.map(h => `"${h.replace(/"/g, '""')}"`).join(",") + "\n";
+        headers.push("Total Sesi Hadir");
 
-        // CSV Rows
+        const dataRows = [headers];
+
         filteredSiswa.forEach(s => {
             const email = (s && s.email) ? String(s.email).toLowerCase().trim() : '';
             const studentPresence = currentAbsensiMap[email] || {};
 
-            const row = [s.nama || '', s.email || ''];
+            const row = [s.nama || '', s.email || '', s.kelas || '-'];
+            let totalHadir = 0;
+
             daftarMapel.forEach(m => {
                 const target = mapelSessionCounts[m] || 0;
                 const hadir = studentPresence[m] || 0;
+                totalHadir += hadir;
                 if (target > 0) {
                     row.push(`${hadir}/${target}`);
                 } else {
                     row.push(hadir > 0 ? `${hadir} hadir` : '-');
                 }
             });
-            csvContent += row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",") + "\n";
+            row.push(totalHadir);
+            dataRows.push(row);
         });
 
-        // Trigger file download
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.setAttribute("href", url);
+        const dateStr = new Date().toISOString().slice(0,10);
+
+        if (typeof XLSX !== 'undefined') {
+            const ws = XLSX.utils.aoa_to_sheet(dataRows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Matriks Kehadiran");
+            XLSX.writeFile(wb, `Rekap_Kehadiran_Siswa_${dateStr}.xlsx`);
+        } else {
+            let csvContent = "\uFEFF";
+            dataRows.forEach(row => {
+                csvContent += row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",") + "\n";
+            });
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Rekap_Kehadiran_Siswa_${dateStr}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+
+    function downloadLogAbsensi() {
+        const validAbsen = Array.isArray(rawAbsensi) ? rawAbsensi : [];
+        if (validAbsen.length === 0) {
+            alert('Belum ada log riwayat presensi.');
+            return;
+        }
+
+        const dataRows = [
+            ["Tanggal & Waktu", "Email Siswa", "Nama Siswa", "Mata Pelajaran", "Metode Presensi", "Status"]
+        ];
+
+        validAbsen.forEach(a => {
+            dataRows.push([
+                a.timestamp || '',
+                a.email || '',
+                a.nama || '',
+                a.mapel || '',
+                a.metode || '',
+                a.status || 'HADIR'
+            ]);
+        });
 
         const dateStr = new Date().toISOString().slice(0,10);
-        link.setAttribute("download", `Rekap_Kehadiran_Siswa_${dateStr}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+
+        if (typeof XLSX !== 'undefined') {
+            const ws = XLSX.utils.aoa_to_sheet(dataRows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Log Presensi");
+            XLSX.writeFile(wb, `Log_Riwayat_Presensi_${dateStr}.xlsx`);
+        }
     }
 
     function renderAbsenMatrix() {

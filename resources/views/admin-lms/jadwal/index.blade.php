@@ -29,13 +29,16 @@
             <h2 class="text-2xl font-bold text-gray-900">Manajemen Jadwal Kelas 🗓️</h2>
             <p class="text-gray-500 text-xs mt-1">Tambahkan sesi pelatihan baru, perbarui tautan Zoom, nama dosen, atau hapus sesi dari Google Sheets.</p>
         </div>
-        <div class="flex gap-2 w-full sm:w-auto">
-            <a href="{{ route('admin-lms.index') }}" class="flex-1 sm:flex-initial text-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl transition text-xs font-bold flex items-center justify-center gap-2">
-                <i class="fas fa-arrow-left"></i> Kembali
-            </a>
+        <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+            <button onclick="exportJadwalToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl transition text-xs font-bold flex items-center justify-center gap-2">
+                <i class="fas fa-file-excel"></i> Export Excel (.xlsx)
+            </button>
             <button onclick="openJadwalModal()" class="flex-1 sm:flex-initial bg-violet-600 hover:bg-violet-700 text-white px-4 py-2.5 rounded-xl transition text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-violet-950/10">
                 <i class="fas fa-plus"></i> Tambah Jadwal
             </button>
+            <a href="{{ route('admin-lms.index') }}" class="flex-1 sm:flex-initial text-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl transition text-xs font-bold flex items-center justify-center gap-2">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
         </div>
     </div>
 
@@ -463,6 +466,40 @@
                 }
             });
         @endif
-    @endif
+    function exportJadwalToExcel() {
+        const table = document.querySelector('table');
+        if (!table) return;
+
+        const dataRows = [
+            ["Tanggal & Jam", "Mata Pelajaran", "Judul Topik / Materi", "Dosen / Tutor", "Link Zoom", "Link Rekaman"]
+        ];
+
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(tr => {
+            const tds = tr.querySelectorAll('td');
+            if (tds.length >= 5) {
+                const zoomLink = tds[4].querySelector('a') ? tds[4].querySelector('a').href : '-';
+                dataRows.push([
+                    tds[0].innerText.replace(/\n/g, ' ').trim(),
+                    tds[1].innerText.trim(),
+                    tds[2].innerText.trim(),
+                    tds[3].innerText.trim(),
+                    zoomLink,
+                    '-'
+                ]);
+            }
+        });
+
+        const dateStr = new Date().toISOString().slice(0,10);
+
+        if (typeof XLSX !== 'undefined') {
+            const ws = XLSX.utils.aoa_to_sheet(dataRows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Jadwal Kelas");
+            XLSX.writeFile(wb, `Jadwal_Kelas_LMS_${dateStr}.xlsx`);
+        } else {
+            alert('Library Excel belum siap.');
+        }
+    }
 </script>
 @endsection
