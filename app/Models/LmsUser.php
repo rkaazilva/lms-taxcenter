@@ -16,6 +16,7 @@ class LmsUser extends Model
         'link',
         'sertifikat',
         'kelas',
+        'telepon',
     ];
 
     /**

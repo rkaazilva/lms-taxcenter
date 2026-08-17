@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LmsController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\AdminGuruController;
+use App\Http\Controllers\AdminSiswaController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AdminArticleController;
 
@@ -88,6 +89,13 @@ Route::middleware('cek.login')->group(function () {
         Route::put('/guru/{guru}', [AdminGuruController::class, 'update'])->name('guru.update');
         Route::delete('/guru/{guru}', [AdminGuruController::class, 'destroy'])->name('guru.destroy');
         Route::post('/guru/{guru}/toggle-status', [AdminGuruController::class, 'toggleStatus'])->name('guru.toggle_status');
+        
+        // Siswa Management
+        Route::get('/siswa', [AdminSiswaController::class, 'index'])->name('siswa.index');
+        Route::get('/siswa/tambah', [AdminSiswaController::class, 'create'])->name('siswa.create');
+        Route::post('/siswa', [AdminSiswaController::class, 'store'])->name('siswa.store');
+        Route::post('/siswa/{id}/reset-password', [AdminSiswaController::class, 'resetPassword'])->name('siswa.reset_password');
+        Route::delete('/siswa/{id}', [AdminSiswaController::class, 'destroy'])->name('siswa.destroy');
         
         // Cache Sync
         Route::post('/sync-cache', [App\Http\Controllers\AdminLmsController::class, 'syncCache'])->name('sync_cache');

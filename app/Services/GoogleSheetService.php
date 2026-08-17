@@ -883,6 +883,44 @@ class GoogleSheetService
         }
     }
 
+    /**
+     * Kirim pesan WhatsApp personal ke nomor tertentu menggunakan Fonnte API
+     */
+    public function sendWaDirect(string $targetPhone, string $message): bool
+    {
+        $token = env('FONNTE_TOKEN');
+        $phone = preg_replace('/[^0-9]/', '', $targetPhone);
+        if (substr($phone, 0, 1) === '0') {
+            $phone = '62' . substr($phone, 1);
+        }
+
+        if (empty($token) || empty($phone)) {
+            Log::warning("[GoogleSheetService] sendWaDirect aborted: FONNTE_TOKEN or phone is empty.");
+            return false;
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+            ])->timeout(15)->post('https://api.fonnte.com/send', [
+                'target' => $phone,
+                'message' => $message,
+            ]);
+
+            if ($response->successful()) {
+                $result = $response->json();
+                Log::info("[GoogleSheetService] sendWaDirect to {$phone} response: " . json_encode($result));
+                return isset($result['status']) && $result['status'] == true;
+            }
+
+            Log::error("[GoogleSheetService] sendWaDirect - HTTP Error {$response->status()}: " . $response->body());
+            return false;
+        } catch (\Exception $e) {
+            Log::error("[GoogleSheetService] sendWaDirect Exception: " . $e->getMessage());
+            return false;
+        }
+    }
+
     // ============================================================
     // HELPER METHODS PRIVATE
     // ============================================================

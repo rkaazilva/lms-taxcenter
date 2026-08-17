@@ -178,6 +178,18 @@
             <h4 class="font-bold text-md text-rose-950">Manajemen Guru</h4>
             <p class="text-[11px] text-gray-500 mt-2 leading-relaxed">Kelola akun guru/tutor, daftarkan email, petakan mata pelajaran, dan aktifkan/nonaktifkan status.</p>
         </a>
+
+        <!-- Siswa Card -->
+        <a href="{{ route('admin-lms.siswa.index') }}" class="glass-card p-6 rounded-3xl shadow-sm hover-scale group block">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center transition group-hover:scale-110">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <i class="fas fa-chevron-right text-gray-300 text-xs transition group-hover:text-blue-950 group-hover:translate-x-1"></i>
+            </div>
+            <h4 class="font-bold text-md text-blue-950">Pendaftaran Siswa</h4>
+            <p class="text-[11px] text-gray-500 mt-2 leading-relaxed">Daftarkan akun siswa baru, atur kelas/angkatan, dan kirimkan password via Email & WhatsApp otomatis.</p>
+        </a>
     </div>
 
     <!-- Recent Jadwal Preview -->

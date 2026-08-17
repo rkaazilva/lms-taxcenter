@@ -208,6 +208,9 @@
                     <a href="{{ route('admin-lms.tugas.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->is('admin-lms/tugas*') ? $themeMenuActive : $themeMenuDefault . ' ' . $themeMenuHover }} transition font-bold text-xs">
                         <i class="fas fa-clipboard-list w-4 text-center text-xs"></i> Manajemen Tugas
                     </a>
+                    <a href="{{ route('admin-lms.siswa.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->is('admin-lms/siswa*') ? $themeMenuActive : $themeMenuDefault . ' ' . $themeMenuHover }} transition font-bold text-xs">
+                        <i class="fas fa-users-cog w-4 text-center text-xs"></i> Pendaftaran Siswa
+                    </a>
                     <a href="{{ route('admin-lms.guru.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->is('admin-lms/guru*') ? $themeMenuActive : $themeMenuDefault . ' ' . $themeMenuHover }} transition font-bold text-xs">
                         <i class="fas fa-user-graduate w-4 text-center text-xs"></i> Manajemen Guru
                     </a>
@@ -301,6 +304,9 @@
                     </a>
                     <a href="{{ route('admin-lms.tugas.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->is('admin-lms/tugas*') ? $themeMenuActive : $themeMenuDefault . ' ' . $themeMenuHover }} transition font-bold text-xs">
                         <i class="fas fa-clipboard-list w-4 text-center text-xs"></i> Manajemen Tugas
+                    </a>
+                    <a href="{{ route('admin-lms.siswa.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->is('admin-lms/siswa*') ? $themeMenuActive : $themeMenuDefault . ' ' . $themeMenuHover }} transition font-bold text-xs">
+                        <i class="fas fa-users-cog w-4 text-center text-xs"></i> Pendaftaran Siswa
                     </a>
                     <a href="{{ route('admin-lms.guru.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->is('admin-lms/guru*') ? $themeMenuActive : $themeMenuDefault . ' ' . $themeMenuHover }} transition font-bold text-xs">
                         <i class="fas fa-user-graduate w-4 text-center text-xs"></i> Manajemen Guru
