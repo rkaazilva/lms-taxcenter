@@ -1458,11 +1458,12 @@
             if (result.status === 'success') {
                 Swal.fire({
                     title: 'Berhasil Absen!',
-                    text: 'Kehadiran Anda menonton rekaman kelas berhasil disimpan ke Google Sheets.',
+                    text: 'Kehadiran Anda menonton rekaman kelas berhasil dicatat.',
                     icon: 'success',
                     confirmButtonColor: '#2563eb'
                 });
                 closeYoutubeModal();
+                loadDashboardData();
             } else {
                 Swal.fire({
                     title: 'Gagal',
@@ -1495,6 +1496,9 @@
                 },
                 body: JSON.stringify({ mapel: mapel, metode: "Live Zoom" })
             });
+            setTimeout(() => {
+                loadDashboardData();
+            }, 600);
         } catch (error) {
             console.warn("Gagal mencatat absensi Live Zoom di background:", error);
         }
