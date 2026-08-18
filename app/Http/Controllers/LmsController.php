@@ -390,16 +390,25 @@ class LmsController extends Controller
         $request->validate([
             'mapel'        => 'required|string',
             'judul'        => 'required|string|max:255',
-            'link_modul'   => 'nullable|url',
-            'link_youtube' => 'nullable|url',
+            'link_modul'   => 'nullable|string',
+            'link_youtube' => 'nullable|string',
             'keterangan'   => 'nullable|string',
             'file_modul'   => 'nullable|file|max:30720', // max 30MB
             'status'       => 'nullable|in:Rilis,Draft',
             'kelas'        => 'nullable|string|max:100',
         ]);
 
+        $linkModul = trim($request->input('link_modul', ''));
+        if (!empty($linkModul) && !preg_match('~^(?:f|ht)tps?://~i', $linkModul)) {
+            $linkModul = 'https://' . $linkModul;
+        }
+
+        $linkYoutube = trim($request->input('link_youtube', ''));
+        if (!empty($linkYoutube) && !preg_match('~^(?:f|ht)tps?://~i', $linkYoutube)) {
+            $linkYoutube = 'https://' . $linkYoutube;
+        }
+
         // If a file was uploaded, store it locally
-        $linkModul = $request->input('link_modul', '');
         if ($request->hasFile('file_modul')) {
             $file = $request->file('file_modul');
             if (!$this->isSafeExtension($file->getClientOriginalName())) {
@@ -414,7 +423,7 @@ class LmsController extends Controller
             'mapel'        => $request->mapel,
             'judul'        => $request->judul,
             'link_modul'   => $linkModul,
-            'link_youtube' => $request->link_youtube ?? '',
+            'link_youtube' => $linkYoutube,
             'keterangan'   => $request->keterangan ?? '',
             'status'       => $request->status ?? 'Rilis',
             'kelas'        => $request->kelas ?? '',
@@ -434,14 +443,18 @@ class LmsController extends Controller
             'original_judul' => 'required|string|max:255',
             'mapel'          => 'required|string',
             'judul'          => 'required|string|max:255',
-            'link_modul'     => 'nullable|url',
+            'link_modul'     => 'nullable|string',
             'keterangan'     => 'nullable|string',
             'file_modul'     => 'nullable|file|max:30720',
             'status'         => 'nullable|in:Rilis,Draft',
             'kelas'          => 'nullable|string|max:100',
         ]);
 
-        $linkModul = $request->input('link_modul', '');
+        $linkModul = trim($request->input('link_modul', ''));
+        if (!empty($linkModul) && !preg_match('~^(?:f|ht)tps?://~i', $linkModul)) {
+            $linkModul = 'https://' . $linkModul;
+        }
+
         if ($request->hasFile('file_modul')) {
             $file = $request->file('file_modul');
             if (!$this->isSafeExtension($file->getClientOriginalName())) {
@@ -493,7 +506,7 @@ class LmsController extends Controller
             'mapel'           => 'required|string',
             'judul'           => 'required|string|max:255',
             'deskripsi'       => 'nullable|string',
-            'link_soal'       => 'nullable|url',
+            'link_soal'       => 'nullable|string',
             'deadline_date'   => 'nullable|date',
             'deadline_hour'   => 'nullable|string',
             'deadline_minute' => 'nullable|string',
@@ -501,7 +514,11 @@ class LmsController extends Controller
             'blast'           => 'nullable|string',
         ]);
 
-        $linkSoal = $request->input('link_soal', '');
+        $linkSoal = trim($request->input('link_soal', ''));
+        if (!empty($linkSoal) && !preg_match('~^(?:f|ht)tps?://~i', $linkSoal)) {
+            $linkSoal = 'https://' . $linkSoal;
+        }
+
         if ($request->hasFile('file_soal')) {
             $file = $request->file('file_soal');
             if (!$this->isSafeExtension($file->getClientOriginalName())) {
@@ -551,7 +568,7 @@ class LmsController extends Controller
             'mapel'             => 'required|string',
             'judul'             => 'required|string|max:255',
             'deskripsi'         => 'nullable|string',
-            'link_soal'         => 'nullable|url',
+            'link_soal'         => 'nullable|string',
             'deadline_date'     => 'nullable|date',
             'deadline_hour'     => 'nullable|string',
             'deadline_minute'   => 'nullable|string',
@@ -559,7 +576,11 @@ class LmsController extends Controller
             'blast'             => 'nullable|string',
         ]);
 
-        $linkSoal = $request->input('link_soal', '');
+        $linkSoal = trim($request->input('link_soal', ''));
+        if (!empty($linkSoal) && !preg_match('~^(?:f|ht)tps?://~i', $linkSoal)) {
+            $linkSoal = 'https://' . $linkSoal;
+        }
+
         if ($request->hasFile('file_soal')) {
             $file = $request->file('file_soal');
             if (!$this->isSafeExtension($file->getClientOriginalName())) {

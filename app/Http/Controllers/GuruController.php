@@ -282,16 +282,29 @@ class GuruController extends Controller
     private function filterByMapel($items, $guruMapel, $role = '')
     {
         if (in_array(strtoupper($role), ['ADMIN', 'ADMIN_LMS'])) {
+            return is_array($items) ? $items : [];
+        }
+
+        if (!is_array($items)) {
+            return [];
+        }
+
+        // Fallback: If guru has no specific mapel assigned yet, show all items so they are not blocked
+        if (empty($guruMapel)) {
             return $items;
         }
 
-        if (empty($guruMapel) || !is_array($items)) {
-            return []; // Tutors with no mapel mapped see nothing
-        }
+        $normalizedGuruMapel = array_map(function($m) {
+            return \App\Services\GoogleSheetService::normalizeMapelName($m);
+        }, (array)$guruMapel);
 
-        return array_values(array_filter($items, function ($item) use ($guruMapel) {
+        return array_values(array_filter($items, function ($item) use ($guruMapel, $normalizedGuruMapel) {
             $itemMapel = $item['mapel'] ?? '';
-            return in_array($itemMapel, $guruMapel);
+            if (in_array($itemMapel, $guruMapel)) {
+                return true;
+            }
+            $normItemMapel = \App\Services\GoogleSheetService::normalizeMapelName($itemMapel);
+            return in_array($normItemMapel, $normalizedGuruMapel);
         }));
     }
 

@@ -656,20 +656,28 @@ class GoogleSheetService
             if (\Illuminate\Support\Facades\Schema::hasTable('lms_submissions')) {
                 $email = strtolower(trim($data['email'] ?? ''));
                 $idTugas = trim($data['id_tugas'] ?? '');
-                $sub = \App\Models\LmsSubmission::where('id_tugas', $idTugas)->where('email', $email)->first();
-                if ($sub) {
-                    $sub->update([
-                        'nilai'    => isset($data['nilai']) ? (int)$data['nilai'] : $sub->nilai,
-                        'feedback' => $data['feedback'] ?? $sub->feedback,
-                    ]);
-                    Cache::forget('lms_submissions');
-                    Cache::forget('lms_nilai_' . md5($email));
-                    return ['status' => 'success', 'message' => 'Penilaian berhasil diperbarui secara native!'];
-                }
-            }
-        } catch (\Exception $e) {}
+                
+                \App\Models\LmsSubmission::updateOrCreate(
+                    [
+                        'id_tugas' => $idTugas,
+                        'email'    => $email,
+                    ],
+                    [
+                        'nama_siswa' => $data['nama'] ?? $data['nama_siswa'] ?? '',
+                        'nilai'      => isset($data['nilai']) ? (int)$data['nilai'] : null,
+                        'feedback'   => $data['feedback'] ?? '',
+                    ]
+                );
 
-        return ['status' => 'error', 'message' => 'Pengumpulan tugas tidak ditemukan.'];
+                Cache::forget('lms_submissions');
+                Cache::forget('lms_nilai_' . md5($email));
+                return ['status' => 'success', 'message' => 'Penilaian berhasil diperbarui!'];
+            }
+        } catch (\Exception $e) {
+            Log::error("[GoogleSheetService] gradeSubmission error: " . $e->getMessage());
+        }
+
+        return ['status' => 'error', 'message' => 'Gagal menyimpan nilai.'];
     }
 
     /**
@@ -680,23 +688,26 @@ class GoogleSheetService
         Cache::forget('lms_submissions');
         foreach (is_array($items) ? $items : [] as $it) {
             if (isset($it['email'])) {
-                Cache::forget('lms_nilai_' . md5(strtolower(trim($it['email']))));
+                $email = strtolower(trim($it['email'] ?? ''));
+                Cache::forget('lms_nilai_' . md5($email));
                 try {
                     if (\Illuminate\Support\Facades\Schema::hasTable('lms_submissions')) {
-                        $email = strtolower(trim($it['email'] ?? ''));
                         $idTugas = trim($it['id_tugas'] ?? '');
-                        $sub = \App\Models\LmsSubmission::where('id_tugas', $idTugas)->where('email', $email)->first();
-                        if ($sub) {
-                            $sub->update([
-                                'nilai'    => isset($it['nilai']) ? (int)$it['nilai'] : $sub->nilai,
-                                'feedback' => $it['feedback'] ?? $sub->feedback,
-                            ]);
-                        }
+                        \App\Models\LmsSubmission::updateOrCreate(
+                            [
+                                'id_tugas' => $idTugas,
+                                'email'    => $email,
+                            ],
+                            [
+                                'nilai'    => isset($it['nilai']) ? (int)$it['nilai'] : null,
+                                'feedback' => $it['feedback'] ?? '',
+                            ]
+                        );
                     }
                 } catch (\Exception $e) {}
             }
         }
-        return ['status' => 'success', 'message' => 'Penilaian batch berhasil disimpan secara native!'];
+        return ['status' => 'success', 'message' => 'Penilaian batch berhasil disimpan!'];
     }
 
     /**
