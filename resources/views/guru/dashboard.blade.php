@@ -49,25 +49,14 @@
 <!-- TAB: DASHBOARD -->
 <div id="tab-dashboard" class="tab-content block space-y-6">
 
-<!-- HEADER BANNER & SINKRONISASI -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-    <div class="lg:col-span-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl border border-emerald-400/20">
+<!-- HEADER BANNER -->
+<div class="mb-8">
+    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl border border-emerald-400/20">
         <div class="absolute -right-20 -top-20 w-64 h-64 bg-emerald-400 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
         <div class="relative z-10">
             <h2 class="text-2xl font-bold mb-2">Selamat datang di Panel Guru, {{ session('nama', 'Dosen') }}! 👋</h2>
-            <p class="text-emerald-100 text-xs leading-relaxed max-w-lg">Panel ini didesain khusus untuk memudahkan Bapak/Ibu Dosen dalam mengunggah modul pelatihan (PDF), membagikan link video rekaman Youtube, serta membuat daftar tugas secara dinamis.</p>
+            <p class="text-emerald-100 text-xs leading-relaxed max-w-2xl">Panel ini didesain khusus untuk memudahkan Bapak/Ibu Dosen dalam mengunggah modul pelatihan (PDF), membagikan link video rekaman Youtube, serta membuat & menilai daftar tugas siswa secara instan ke sistem database.</p>
         </div>
-    </div>
-    
-    <!-- Sync Card -->
-    <div class="bg-gradient-to-br from-amber-500 to-yellow-500 p-6 rounded-3xl shadow-xl flex flex-col justify-between text-emerald-950 border border-yellow-300/30">
-        <div>
-            <h3 class="font-black text-md mb-1"><i class="fas fa-sync-alt mr-1"></i> Sinkronisasi Google Sheets</h3>
-            <p class="text-emerald-950/80 text-[10px] leading-relaxed">Klik tombol di bawah jika Bapak/Ibu baru saja mengubah data langsung di Google Spreadsheet dan ingin perubahan langsung muncul saat ini juga.</p>
-        </div>
-        <button id="btnSync" onclick="syncCache()" class="mt-4 w-full bg-emerald-800 hover:bg-emerald-600 text-white font-bold py-2.5 px-4 rounded-xl shadow transition duration-200 text-xs">
-            Sinkronkan Data Sekarang
-        </button>
     </div>
 </div>
 
