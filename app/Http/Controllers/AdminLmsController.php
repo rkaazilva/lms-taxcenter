@@ -153,14 +153,19 @@ class AdminLmsController extends Controller
     public function jadwalStore(Request $request)
     {
         $request->validate([
-            'tanggal'   => 'required|string',
-            'jam'       => 'nullable|string',
-            'mapel'     => 'required|string',
-            'materi'    => 'required|string',
-            'dosen'     => 'required|string',
-            'link'      => 'required|url',
-            'blast'     => 'nullable|string',
+            'tanggal' => 'required|string',
+            'jam'     => 'nullable|string',
+            'mapel'   => 'required|string',
+            'materi'  => 'required|string',
+            'dosen'   => 'required|string',
+            'link'    => 'required|string',
+            'blast'   => 'nullable|string',
         ]);
+
+        $linkZoom = trim($request->link);
+        if (!empty($linkZoom) && !preg_match('~^(?:f|ht)tps?://~i', $linkZoom)) {
+            $linkZoom = 'https://' . $linkZoom;
+        }
 
         // Simpan ke MySQL Native via GoogleSheetService
         $result = $this->gs->addJadwal([
@@ -169,18 +174,18 @@ class AdminLmsController extends Controller
             'mapel'     => $request->mapel,
             'materi'    => $request->materi,
             'dosen'     => $request->dosen,
-            'link'      => $request->link,
-            'link_zoom' => $request->link,
+            'link'      => $linkZoom,
+            'link_zoom' => $linkZoom,
             'blast'     => $request->has('blast') ? true : false,
         ]);
 
         if ($result['status'] === 'success') {
             // Create system notification for students
             Notification::create([
-                'email' => 'SISWA',
-                'title' => 'Jadwal Baru: ' . $request->materi,
+                'email'   => 'SISWA',
+                'title'   => 'Jadwal Baru: ' . $request->materi,
                 'message' => 'Jadwal baru dirilis untuk mata pelajaran ' . $request->mapel . ' oleh Dosen ' . $request->dosen,
-                'link' => '/siswa/dashboard',
+                'link'    => '/siswa/dashboard',
                 'is_read' => false
             ]);
             
@@ -203,18 +208,13 @@ class AdminLmsController extends Controller
             'jam'              => 'nullable|string',
             'materi'           => 'required|string',
             'dosen'            => 'required|string',
-            'link'             => 'required|url',
+            'link'             => 'required|string',
         ]);
 
-        \Illuminate\Support\Facades\Log::info('[AdminLmsController] jadwalUpdate Request', [
-            'original_tanggal' => $request->original_tanggal,
-            'original_jam'     => $request->original_jam,
-            'original_dosen'   => $request->original_dosen,
-            'tanggal'          => $request->tanggal,
-            'jam'              => $request->jam,
-            'materi'           => $request->materi,
-            'dosen'            => $request->dosen,
-        ]);
+        $linkZoom = trim($request->link);
+        if (!empty($linkZoom) && !preg_match('~^(?:f|ht)tps?://~i', $linkZoom)) {
+            $linkZoom = 'https://' . $linkZoom;
+        }
 
         $result = $this->gs->updateJadwal([
             'original_tanggal' => $request->original_tanggal,
@@ -225,19 +225,17 @@ class AdminLmsController extends Controller
             'materi'           => $request->materi,
             'dosen'            => $request->dosen,
             'moderator'        => '',
-            'link'             => $request->link,
+            'link'             => $linkZoom,
             'blast'            => $request->has('blast') ? true : false,
         ]);
-
-        \Illuminate\Support\Facades\Log::info('[AdminLmsController] jadwalUpdate Result', $result);
 
         if ($result['status'] === 'success') {
             // Create system notification for students
             Notification::create([
-                'email' => 'SISWA',
-                'title' => 'Jadwal Diperbarui: ' . $request->materi,
+                'email'   => 'SISWA',
+                'title'   => 'Jadwal Diperbarui: ' . $request->materi,
                 'message' => 'Jadwal mata pelajaran ' . $request->materi . ' telah diperbarui.',
-                'link' => '/siswa/dashboard',
+                'link'    => '/siswa/dashboard',
                 'is_read' => false
             ]);
             return back()->with('success', 'Jadwal berhasil diperbarui!');
@@ -257,19 +255,11 @@ class AdminLmsController extends Controller
             'dosen'   => 'required|string',
         ]);
 
-        \Illuminate\Support\Facades\Log::info('[AdminLmsController] jadwalDelete Request', [
-            'tanggal' => $request->tanggal,
-            'jam'     => $request->jam,
-            'dosen'   => $request->dosen,
-        ]);
-
         $result = $this->gs->deleteJadwal([
             'tanggal' => $request->tanggal,
             'jam'     => $request->jam,
             'dosen'   => $request->dosen,
         ]);
-
-        \Illuminate\Support\Facades\Log::info('[AdminLmsController] jadwalDelete Result', $result);
 
         if ($result['status'] === 'success') {
             return back()->with('success', 'Jadwal berhasil dihapus!');
@@ -300,13 +290,18 @@ class AdminLmsController extends Controller
         $request->validate([
             'mapel'        => 'required|string',
             'judul'        => 'required|string',
-            'link_youtube' => 'required|url',
+            'link_youtube' => 'required|string',
         ]);
+
+        $linkYoutube = trim($request->link_youtube);
+        if (!empty($linkYoutube) && !preg_match('~^(?:f|ht)tps?://~i', $linkYoutube)) {
+            $linkYoutube = 'https://' . $linkYoutube;
+        }
 
         $result = $this->gs->updateMateriYoutube([
             'mapel'        => $request->mapel,
             'judul'        => $request->judul,
-            'link_youtube' => $request->link_youtube,
+            'link_youtube' => $linkYoutube,
         ]);
 
         if ($result['status'] === 'success') {

@@ -60,10 +60,20 @@ class AdminGuruController extends Controller
             'status.required' => 'Status wajib dipilih',
         ]);
 
-        Guru::create($validated);
+        $guru = Guru::create($validated);
+
+        // Sync account to lms_users table so teacher can log in
+        \App\Models\LmsUser::updateOrCreate(
+            ['email' => strtolower(trim($validated['email']))],
+            [
+                'nama'     => $validated['nama'],
+                'role'     => 'TUTOR',
+                'password' => \Illuminate\Support\Facades\Hash::make($request->input('password', '123456')),
+            ]
+        );
 
         return redirect()->route('admin-lms.guru.index')
-            ->with('success', "Guru '{$validated['nama']}' berhasil ditambahkan ke database!");
+            ->with('success', "Guru '{$validated['nama']}' berhasil ditambahkan ke database & dibuatkan akun login!");
     }
 
     /**
@@ -111,6 +121,11 @@ class AdminGuruController extends Controller
         ]);
 
         $guru->update($validated);
+
+        // Sync update to lms_users table
+        \App\Models\LmsUser::where('email', strtolower(trim($validated['email'])))->update([
+            'nama' => $validated['nama'],
+        ]);
 
         return redirect()->route('admin-lms.guru.index')
             ->with('success', "Data guru '{$validated['nama']}' berhasil diperbarui!");
