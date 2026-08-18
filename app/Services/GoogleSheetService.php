@@ -736,13 +736,25 @@ class GoogleSheetService
             if (is_array($abs)) {
                 foreach ($abs as $a) {
                     if (isset($a['email']) && isset($a['mapel'])) {
-                        \App\Models\LmsAbsensi::create([
-                            'email'     => strtolower(trim($a['email'])),
-                            'nama'      => $a['nama'] ?? '',
-                            'mapel'     => $a['mapel'] ?? '',
-                            'metode'    => $a['metode'] ?? 'Live Zoom',
-                            'timestamp' => $a['timestamp'] ?? \Carbon\Carbon::now()->format('Y-m-d H:i:s'),
-                        ]);
+                        $rawTs = $a['timestamp'] ?? null;
+                        $formattedTs = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+                        if (!empty($rawTs)) {
+                            try {
+                                $formattedTs = \Carbon\Carbon::parse($rawTs)->format('Y-m-d H:i:s');
+                            } catch (\Exception $ex) {}
+                        }
+
+                        \App\Models\LmsAbsensi::updateOrCreate(
+                            [
+                                'email'     => strtolower(trim($a['email'])),
+                                'mapel'     => $a['mapel'] ?? '',
+                                'timestamp' => $formattedTs,
+                            ],
+                            [
+                                'nama'   => $a['nama'] ?? '',
+                                'metode' => $a['metode'] ?? 'Live Zoom',
+                            ]
+                        );
                         $report['absensis']++;
                     }
                 }

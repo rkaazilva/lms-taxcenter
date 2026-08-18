@@ -147,6 +147,14 @@ Route::get('/migrate-database', function () {
 // ROUTE MIGRASI AMAN UNTUK PRODUCTION (Bisa diakses langsung saat awal deploy untuk setup tabel)
 Route::get('/run-migration-safe', function () {
     try {
+        if (request()->has('fresh')) {
+            \Illuminate\Support\Facades\Artisan::call('migrate:fresh', [
+                '--force' => true,
+                '--seed'  => true,
+            ]);
+            return "Database Fresh Migration & Seeding Berhasil! <br><a href='/'>Kembali ke Home</a>";
+        }
+
         \Illuminate\Support\Facades\Artisan::call('migrate', [
             '--force' => true,
         ]);
