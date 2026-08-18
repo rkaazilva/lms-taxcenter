@@ -760,25 +760,9 @@ class GoogleSheetService
                 }
             }
 
-            // 6. Impor Siswa/Users
-            $users = $this->getFromApi('getAllSiswa');
-            if (is_array($users)) {
-                foreach ($users as $u) {
-                    if (isset($u['email'])) {
-                        \App\Models\LmsUser::updateOrCreate(
-                            ['email' => strtolower(trim($u['email']))],
-                            [
-                                'nama'       => $u['nama'] ?? '',
-                                'password'   => isset($u['password']) ? \Illuminate\Support\Facades\Hash::make($u['password']) : \Illuminate\Support\Facades\Hash::make('123'),
-                                'role'       => strtoupper($u['role'] ?? 'SISWA'),
-                                'kelas'      => $u['kelas'] ?? '',
-                                'sertifikat' => $u['sertifikat'] ?? null,
-                            ]
-                        );
-                        $report['users']++;
-                    }
-                }
-            }
+            // 6. Impor Siswa/Users (Terhitung Password Hashed dari DATA_LOGIN)
+            $this->syncLmsUsers();
+            $report['users'] = \App\Models\LmsUser::count();
 
             $this->forgetAllCacheKeys();
 
