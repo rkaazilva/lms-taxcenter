@@ -582,7 +582,9 @@
             // Reset retry counter on success
             dashboardRetryCount = 0;
             
+            document.getElementById('lmsLoader').classList.add('hidden');
             document.getElementById('lmsLoader').style.display = 'none';
+            document.getElementById('lmsContent').classList.remove('hidden');
             document.getElementById('lmsContent').style.display = 'block';
 
             // Renders
@@ -1064,9 +1066,14 @@
                         actionHtml = `
                             <div class="flex flex-wrap items-center justify-between gap-2 mt-3 pt-3 border-t border-gray-100/70 text-xs">
                                 <span class="text-gray-400 font-semibold">Terkumpul</span>
-                                <a href="${nilaiSiswa.link_tugas}" target="_blank" class="text-blue-600 hover:text-indigo-800 font-bold flex items-center gap-1">
-                                    <i class="fas fa-external-link-alt"></i> Lihat File
-                                </a>
+                                <div class="flex items-center gap-3">
+                                    <a href="${nilaiSiswa.link_tugas}" target="_blank" class="text-blue-600 hover:text-indigo-800 font-bold flex items-center gap-1">
+                                        <i class="fas fa-external-link-alt"></i> Lihat File
+                                    </a>
+                                    <button onclick="openTugasModal('${tugas.id_tugas}', '${tugas.judul}', '${tugas.deskripsi}', '${tugas.link_soal}')" class="text-amber-600 hover:text-amber-800 font-bold text-xs flex items-center gap-1">
+                                        <i class="fas fa-edit"></i> Edit / Unggah Ulang
+                                    </button>
+                                </div>
                             </div>
                         `;
                     } else {
@@ -1412,12 +1419,12 @@
         }
     }
 
-    // --- ABSENSI & YOUTUBE ---
-    
     function getIdYT(url) {
-        let regex = /(youtu.*be.*)\/(watch\?v=|embed\/|v|shorts|)(.*?((?=[&#?])|$))/gm;
-        let found = regex.exec(url);
-        return (found && found.length > 3) ? found[3] : url;
+        if (!url) return "";
+        const str = String(url).trim();
+        if (str.length === 11 && !str.includes('/') && !str.includes('.')) return str;
+        const match = str.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
+        return match ? match[1] : str;
     }
 
     let currentMapelYT = "";

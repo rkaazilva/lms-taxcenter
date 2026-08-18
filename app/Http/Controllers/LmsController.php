@@ -29,6 +29,9 @@ class LmsController extends Controller
     public function getDashboardData(Request $request)
     {
         $email = session('email');
+        if (empty($email)) {
+            return response()->json(['status' => 'error', 'message' => 'Unauthenticated'], 401);
+        }
 
         // Ambil semua data dashboard secara lebih efisien.
         $dashboardData = $this->gs->getDashboardData($email);
@@ -302,36 +305,35 @@ class LmsController extends Controller
      */
     public function submitTugas(Request $request)
     {
+        $email = session('email');
+        if (empty($email)) {
+            return response()->json(['status' => 'error', 'message' => 'Sesi login berakhir. Silakan login kembali.'], 401);
+        }
+
         $request->validate([
             'id_tugas'   => 'required|string',
             'base64'     => 'nullable|string',
             'fileName'   => 'nullable|string',
             'mimeType'   => 'nullable|string',
-            'link_tugas' => 'nullable|url',
+            'link_tugas' => 'nullable|string',
         ]);
-
-        // BUG-012: Backend duplicate submission check (per email + id_tugas)
-        $submitKey = 'submit_tugas_' . md5(session('email') . '_' . $request->id_tugas);
-        if (Cache::has($submitKey)) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Tugas ini sudah pernah Anda kumpulkan sebelumnya.'
-            ], 409);
-        }
 
         if (empty($request->base64) && empty($request->link_tugas)) {
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Harap unggah berkas atau masukkan tautan (link) tugas Anda!'
             ], 422);
         }
 
-        $linkTugas = $request->link_tugas ?? '';
+        $linkTugas = trim($request->link_tugas ?? '');
+        if (!empty($linkTugas) && !preg_match('~^(?:f|ht)tps?://~i', $linkTugas)) {
+            $linkTugas = 'https://' . $linkTugas;
+        }
 
         if (!empty($request->base64) && !empty($request->fileName)) {
             if (!$this->isSafeExtension($request->fileName)) {
                 return response()->json([
-                    'status' => 'error',
+                    'status'  => 'error',
                     'message' => 'Unggahan ditolak. Format file tidak diperbolehkan demi keamanan sistem!'
                 ], 422);
             }
@@ -347,14 +349,14 @@ class LmsController extends Controller
                 $linkTugas = asset('storage/' . $filePath);
             } catch (\Exception $e) {
                 return response()->json([
-                    'status' => 'error',
+                    'status'  => 'error',
                     'message' => 'Gagal menyimpan berkas tugas di server: ' . $e->getMessage()
                 ], 500);
             }
         }
 
         $payload = [
-            'email'      => session('email'),
+            'email'      => $email,
             'nama'       => session('nama'),
             'id_tugas'   => $request->id_tugas,
             'base64'     => '',
@@ -364,12 +366,6 @@ class LmsController extends Controller
         ];
 
         $result = $this->gs->submitTugas($payload);
-
-        if (isset($result['status']) && $result['status'] === 'success') {
-            // Set cache guard agar tidak bisa submit tugas yang sama lagi (TTL: 30 hari)
-            Cache::put($submitKey, true, now()->addDays(30));
-        }
-
         return response()->json($result);
     }
 
