@@ -27,7 +27,7 @@
                 <span class="text-xs font-bold text-violet-650 uppercase tracking-widest">Schedule Management</span>
             </div>
             <h2 class="text-2xl font-bold text-gray-900">Manajemen Jadwal Kelas 🗓️</h2>
-            <p class="text-gray-500 text-xs mt-1">Tambahkan sesi pelatihan baru, perbarui tautan Zoom, nama dosen, atau hapus sesi dari Google Sheets.</p>
+            <p class="text-gray-500 text-xs mt-1">Tambahkan sesi pelatihan baru, perbarui tautan Zoom, nama dosen, atau hapus sesi dari sistem database.</p>
         </div>
         <div class="flex flex-wrap gap-2 w-full sm:w-auto">
             <button onclick="exportJadwalToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl transition text-xs font-bold flex items-center justify-center gap-2">
@@ -159,7 +159,7 @@
         <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 flex-shrink-0">
             <div>
                 <h3 id="jadwalModalTitle" class="font-bold text-md text-violet-950">Tambah Jadwal Baru</h3>
-                <p class="text-[10px] text-gray-400 mt-0.5">Simpan jadwal ke Google Sheets</p>
+                <p class="text-[10px] text-gray-400 mt-0.5">Simpan jadwal ke sistem database</p>
             </div>
             <button onclick="closeJadwalModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-400 hover:bg-rose-50 hover:text-rose-500 flex items-center justify-center transition focus:outline-none">
                 <i class="fas fa-times text-sm"></i>
@@ -394,7 +394,7 @@
     }
 
     function showSubmitLoading() {
-        document.getElementById('loadingText').innerText = 'Menyimpan jadwal ke Google Sheets...';
+        document.getElementById('loadingText').innerText = 'Menyimpan jadwal ke sistem database...';
         document.getElementById('loadingOverlay').classList.remove('hidden');
         closeJadwalModal();
     }
@@ -402,7 +402,7 @@
     function confirmHapus(form) {
         Swal.fire({
             title: 'Hapus Sesi Jadwal?',
-            text: "Data jadwal akan dihapus selamanya dari Google Sheets.",
+            text: "Data jadwal akan dihapus dari sistem database.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#e11d48',
@@ -416,7 +416,7 @@
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('loadingText').innerText = 'Menghapus jadwal dari Google Sheets...';
+                document.getElementById('loadingText').innerText = 'Menghapus jadwal dari sistem database...';
                 document.getElementById('loadingOverlay').classList.remove('hidden');
                 form.submit();
             }

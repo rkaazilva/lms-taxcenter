@@ -358,17 +358,26 @@ class GoogleSheetService
         Cache::forget('lms_materi');
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('lms_materis')) {
+                $judul = $data['judul'] ?? $data['materi'] ?? '';
+                $modul = $data['link_modul'] ?? $data['link_pdf'] ?? null;
+                $ket   = $data['keterangan'] ?? $data['deskripsi'] ?? null;
+
                 $materi = \App\Models\LmsMateri::create([
                     'mapel'        => $data['mapel'] ?? '',
-                    'materi'       => $data['materi'] ?? '',
-                    'deskripsi'    => $data['deskripsi'] ?? '',
-                    'link_pdf'     => $data['link_pdf'] ?? null,
+                    'judul'        => $judul,
+                    'link_modul'   => $modul,
                     'link_youtube' => $data['link_youtube'] ?? null,
+                    'keterangan'   => $ket,
+                    'status'       => 'Rilis',
+                    'kelas'        => $data['kelas'] ?? 'Semua',
                 ]);
                 return ['status' => 'success', 'message' => 'Materi berhasil ditambahkan!', 'data' => $materi];
             }
-        } catch (\Exception $e) {}
-        return ['status' => 'error', 'message' => 'Gagal menyimpan materi baru.'];
+        } catch (\Exception $e) {
+            Log::error("[GoogleSheetService] addMateri error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => 'Gagal menyimpan materi baru: ' . $e->getMessage()];
+        }
+        return ['status' => 'error', 'message' => 'Tabel lms_materis tidak ditemukan.'];
     }
 
     /**
@@ -387,11 +396,15 @@ class GoogleSheetService
                     'deskripsi' => $data['deskripsi'] ?? '',
                     'deadline'  => $data['deadline'] ?? null,
                     'link_soal' => $data['link_soal'] ?? null,
+                    'kelas'     => $data['kelas'] ?? 'Semua',
                 ]);
                 return ['status' => 'success', 'message' => 'Tugas berhasil ditambahkan!', 'data' => $tugas];
             }
-        } catch (\Exception $e) {}
-        return ['status' => 'error', 'message' => 'Gagal menyimpan tugas baru.'];
+        } catch (\Exception $e) {
+            Log::error("[GoogleSheetService] addTugas error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => 'Gagal menyimpan tugas baru: ' . $e->getMessage()];
+        }
+        return ['status' => 'error', 'message' => 'Tabel lms_tugas tidak ditemukan.'];
     }
 
     /**
@@ -404,17 +417,23 @@ class GoogleSheetService
             if (\Illuminate\Support\Facades\Schema::hasTable('lms_materis')) {
                 $materi = \App\Models\LmsMateri::find($data['id'] ?? 0);
                 if ($materi) {
+                    $judul = $data['judul'] ?? $data['materi'] ?? $materi->judul;
+                    $modul = $data['link_modul'] ?? $data['link_pdf'] ?? $materi->link_modul;
+                    $ket   = $data['keterangan'] ?? $data['deskripsi'] ?? $materi->keterangan;
+
                     $materi->update([
                         'mapel'        => $data['mapel'] ?? $materi->mapel,
-                        'materi'       => $data['materi'] ?? $materi->materi,
-                        'deskripsi'    => $data['deskripsi'] ?? $materi->deskripsi,
-                        'link_pdf'     => $data['link_pdf'] ?? $materi->link_pdf,
+                        'judul'        => $judul,
+                        'link_modul'   => $modul,
                         'link_youtube' => $data['link_youtube'] ?? $materi->link_youtube,
+                        'keterangan'   => $ket,
                     ]);
                     return ['status' => 'success', 'message' => 'Materi berhasil diperbarui!'];
                 }
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            Log::error("[GoogleSheetService] updateMateri error: " . $e->getMessage());
+        }
         return ['status' => 'error', 'message' => 'Materi tidak ditemukan.'];
     }
 
@@ -438,7 +457,9 @@ class GoogleSheetService
                     return ['status' => 'success', 'message' => 'Tugas berhasil diperbarui!'];
                 }
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            Log::error("[GoogleSheetService] updateTugas error: " . $e->getMessage());
+        }
         return ['status' => 'error', 'message' => 'Tugas tidak ditemukan.'];
     }
 
