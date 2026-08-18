@@ -8,14 +8,5 @@ class LmsJadwal extends Model
 {
     protected $table = 'lms_jadwals';
 
-    protected $fillable = [
-        'tanggal',
-        'jam',
-        'mapel',
-        'materi',
-        'dosen',
-        'link_zoom',
-        'status_sesi',
-        'blast',
-    ];
+    protected $guarded = [];
 }

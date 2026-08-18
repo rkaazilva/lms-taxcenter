@@ -162,16 +162,16 @@ class AdminLmsController extends Controller
             'blast'     => 'nullable|string',
         ]);
 
-        // Kirim ke Google Apps Script
-        $result = $this->gs->postToApi([
-            'action'  => 'addJadwal',
-            'tanggal' => $request->tanggal,
-            'jam'     => $request->jam ?? '',
-            'mapel'   => $request->mapel,
-            'materi'  => $request->materi,
-            'dosen'   => $request->dosen,
-            'link'    => $request->link,
-            'blast'   => $request->has('blast') ? true : false,
+        // Simpan ke MySQL Native via GoogleSheetService
+        $result = $this->gs->addJadwal([
+            'tanggal'   => $request->tanggal,
+            'jam'       => $request->jam ?? '',
+            'mapel'     => $request->mapel,
+            'materi'    => $request->materi,
+            'dosen'     => $request->dosen,
+            'link'      => $request->link,
+            'link_zoom' => $request->link,
+            'blast'     => $request->has('blast') ? true : false,
         ]);
 
         if ($result['status'] === 'success') {

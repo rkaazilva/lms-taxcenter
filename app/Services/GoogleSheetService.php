@@ -327,17 +327,20 @@ class GoogleSheetService
 
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('lms_submissions')) {
+                $nama = $payload['nama_siswa'] ?? $payload['nama'] ?? '';
+                $now = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+
                 \App\Models\LmsSubmission::updateOrCreate(
                     [
                         'email'    => $email,
                         'id_tugas' => $payload['id_tugas'] ?? '',
                     ],
                     [
-                        'nama'       => $payload['nama'] ?? '',
-                        'link_tugas' => $payload['link_tugas'] ?? '',
-                        'nilai'      => $payload['nilai'] ?? '',
-                        'feedback'   => $payload['feedback'] ?? '',
-                        'timestamp'  => \Carbon\Carbon::now()->format('Y-m-d H:i:s'),
+                        'nama_siswa'   => $nama,
+                        'link_tugas'   => $payload['link_tugas'] ?? '',
+                        'nilai'        => !empty($payload['nilai']) ? intval($payload['nilai']) : null,
+                        'feedback'     => $payload['feedback'] ?? '',
+                        'submitted_at' => $now,
                     ]
                 );
 
@@ -346,7 +349,10 @@ class GoogleSheetService
                     'message' => 'Tugas berhasil dikirimkan!',
                 ];
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            Log::error("[GoogleSheetService] submitTugas error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => 'Gagal menyimpan pengumpulan tugas: ' . $e->getMessage()];
+        }
 
         return ['status' => 'error', 'message' => 'Gagal menyimpan pengumpulan tugas.'];
     }
@@ -498,6 +504,33 @@ class GoogleSheetService
     }
 
     /**
+     * Tambah jadwal baru (Admin 100% Native MySQL)
+     */
+    public function addJadwal(array $data): array
+    {
+        Cache::forget('lms_jadwal');
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('lms_jadwals')) {
+                $j = \App\Models\LmsJadwal::create([
+                    'tanggal'     => $data['tanggal'] ?? '',
+                    'jam'         => $data['jam'] ?? '',
+                    'mapel'       => $data['mapel'] ?? '',
+                    'materi'      => $data['materi'] ?? '',
+                    'dosen'       => $data['dosen'] ?? '',
+                    'link_zoom'   => $data['link'] ?? $data['link_zoom'] ?? null,
+                    'status_sesi' => $data['status_sesi'] ?? 'AKAN_DATANG',
+                    'blast'       => !empty($data['blast']) ? 1 : 0,
+                ]);
+                return ['status' => 'success', 'message' => 'Jadwal berhasil ditambahkan!', 'data' => $j];
+            }
+        } catch (\Exception $e) {
+            Log::error("[GoogleSheetService] addJadwal error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => 'Gagal menambahkan jadwal: ' . $e->getMessage()];
+        }
+        return ['status' => 'error', 'message' => 'Tabel lms_jadwals tidak ditemukan.'];
+    }
+
+    /**
      * Update jadwal existing (Admin 100% Native MySQL)
      */
     public function updateJadwal(array $data): array
@@ -589,9 +622,27 @@ class GoogleSheetService
         return $this->safeRemember('lms_submissions', $this->getSubmissionsTtl(), function () {
             try {
                 if (\Illuminate\Support\Facades\Schema::hasTable('lms_submissions')) {
-                    return \App\Models\LmsSubmission::orderBy('id', 'desc')->get()->toArray();
+                    $subs = \App\Models\LmsSubmission::orderBy('id', 'desc')->get();
+                    $result = [];
+                    foreach ($subs as $s) {
+                        $result[] = [
+                            'id'           => $s->id,
+                            'id_tugas'     => $s->id_tugas,
+                            'email'        => $s->email,
+                            'nama'         => $s->nama_siswa ?? $s->nama ?? '',
+                            'nama_siswa'   => $s->nama_siswa ?? $s->nama ?? '',
+                            'link_tugas'   => $s->link_tugas,
+                            'nilai'        => $s->nilai,
+                            'feedback'     => $s->feedback,
+                            'timestamp'    => $s->submitted_at ?? $s->created_at,
+                            'submitted_at' => $s->submitted_at ?? $s->created_at,
+                        ];
+                    }
+                    return $result;
                 }
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) {
+                Log::error("[GoogleSheetService] getAllSubmissions error: " . $e->getMessage());
+            }
             return [];
         }, true);
     }

@@ -8,16 +8,7 @@ class LmsUser extends Model
 {
     protected $table = 'lms_users';
 
-    protected $fillable = [
-        'email',
-        'password',
-        'role',
-        'nama',
-        'link',
-        'sertifikat',
-        'kelas',
-        'telepon',
-    ];
+    protected $guarded = [];
 
     /**
      * Helper to find user by email
