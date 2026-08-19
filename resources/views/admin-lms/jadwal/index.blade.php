@@ -113,9 +113,12 @@
                                 <p class="text-xs font-medium text-gray-700"><i class="far fa-user text-gray-400 mr-1"></i>{{ $item['dosen'] ?? '-' }}</p>
                             </td>
                             <td class="px-6 py-4">
-                                @if(!empty($item['link']))
-                                    <a href="{{ $item['link'] }}" target="_blank" class="inline-flex items-center gap-1.5 text-[10px] bg-blue-50 text-blue-600 border border-blue-100 px-3 py-1 rounded-xl font-bold hover:bg-blue-100 hover:text-blue-700 transition">
-                                        <i class="fas fa-video text-[9px]"></i> Link Zoom
+                                @php
+                                    $linkMeeting = $item['link'] ?? ($item['link_zoom'] ?? '');
+                                @endphp
+                                @if(!empty($linkMeeting))
+                                    <a href="{{ $linkMeeting }}" target="_blank" class="inline-flex items-center gap-1.5 text-[10px] bg-blue-50 text-blue-600 border border-blue-100 px-3 py-1 rounded-xl font-bold hover:bg-blue-100 hover:text-blue-700 transition">
+                                        <i class="fas fa-video text-[9px]"></i> Buka Meeting
                                     </a>
                                 @else
                                     <span class="text-[10px] text-gray-400 font-medium"><i class="fas fa-link-slash mr-1"></i>Belum diset</span>
@@ -123,12 +126,15 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="inline-flex items-center gap-2">
-                                    <button onclick="editJadwal({{ json_encode($item) }})" class="text-[11px] bg-violet-55 bg-violet-50 text-violet-700 border border-violet-100 hover:bg-violet-100 px-3 py-1 rounded-lg font-bold transition">Edit</button>
+                                    <button onclick="editJadwal({{ json_encode($item) }})" class="text-[11px] bg-violet-50 text-violet-700 border border-violet-100 hover:bg-violet-100 px-3 py-1 rounded-lg font-bold transition">Edit</button>
                                     <form action="{{ route('admin-lms.jadwal.delete') }}" method="POST" class="inline" onsubmit="return confirmHapus(this);">
                                         @csrf
+                                        <input type="hidden" name="id" value="{{ $item['id'] ?? '' }}">
                                         <input type="hidden" name="tanggal" value="{{ $item['tanggal'] ?? '' }}">
                                         <input type="hidden" name="jam" value="{{ $item['jam'] ?? '' }}">
                                         <input type="hidden" name="dosen" value="{{ $item['dosen'] ?? '' }}">
+                                        <input type="hidden" name="mapel" value="{{ $item['mapel'] ?? '' }}">
+                                        <input type="hidden" name="materi" value="{{ $item['materi'] ?? '' }}">
                                         <button type="submit" class="text-[11px] bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100 px-3 py-1 rounded-lg font-bold transition">Hapus</button>
                                     </form>
                                 </div>
@@ -152,11 +158,12 @@
     </div>
 </div>
 
-<!-- MODAL FORM JADWAL -->
-<div id="jadwalModal" onclick="closeJadwalModal()" class="fixed inset-0 bg-violet-950/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm transition duration-300">
-    <div class="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl transform scale-95 opacity-0 transition-all duration-300 flex flex-col max-h-[90vh]" id="modalContainer" onclick="event.stopPropagation()">
+<!-- MODAL TAMBAH / EDIT JADWAL -->
+<div id="jadwalModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div id="modalContainer" class="bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-lg overflow-hidden transform scale-95 opacity-0 transition-all duration-300 max-h-[90vh] flex flex-col">
+        
         <!-- Modal Header -->
-        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 flex-shrink-0">
+        <div class="p-6 bg-slate-50/50 border-b border-gray-100 flex items-center justify-between">
             <div>
                 <h3 id="jadwalModalTitle" class="font-bold text-md text-violet-950">Tambah Jadwal Baru</h3>
                 <p class="text-[10px] text-gray-400 mt-0.5">Simpan jadwal ke sistem database</p>
@@ -169,7 +176,8 @@
         <!-- Modal Form -->
         <form id="jadwalForm" action="{{ route('admin-lms.jadwal.store') }}" method="POST" class="p-6 space-y-4 overflow-y-auto flex-1" onsubmit="showSubmitLoading()">
             @csrf
-            <!-- Original fields untuk identifikasi update baris -->
+            <!-- Original fields & ID untuk identifikasi update baris -->
+            <input type="hidden" name="id" id="jadwal_id" value="">
             <input type="hidden" name="original_tanggal" id="original_tanggal" value="">
             <input type="hidden" name="original_jam" id="original_jam" value="">
             <input type="hidden" name="original_dosen" id="original_dosen" value="">
@@ -262,6 +270,7 @@
         // Reset form hanya jika sebelumnya berada di mode Edit (agar draft Tambah baru tetap tersimpan)
         if (form.action.includes('update')) {
             form.reset();
+            document.getElementById('jadwal_id').value = '';
             document.getElementById('original_tanggal').value = '';
             document.getElementById('original_jam').value = '';
             document.getElementById('original_dosen').value = '';
@@ -304,6 +313,7 @@
         document.getElementById('jadwalModalTitle').innerText = 'Edit Jadwal Sesi';
         document.getElementById('jadwalSubmitBtn').innerHTML = '<i class="fas fa-save mr-1"></i> Perbarui Jadwal';
         
+        document.getElementById('jadwal_id').value = jadwal.id ?? '';
         document.getElementById('original_tanggal').value = jadwal.tanggal ?? '';
         document.getElementById('original_jam').value = jadwal.jam ?? '';
         document.getElementById('original_dosen').value = jadwal.dosen ?? '';
@@ -384,7 +394,7 @@
         selectMapel.value = mapelValue;
         form.querySelector('input[name="materi"]').value = jadwal.materi ?? '';
         form.querySelector('input[name="dosen"]').value = jadwal.dosen ?? '';
-        form.querySelector('input[name="link"]').value = jadwal.link ?? '';
+        form.querySelector('input[name="link"]').value = jadwal.link || (jadwal.link_zoom || '');
         
         modal.classList.remove('hidden');
         setTimeout(() => {

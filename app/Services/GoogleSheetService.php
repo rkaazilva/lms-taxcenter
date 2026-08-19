@@ -545,22 +545,50 @@ class GoogleSheetService
         Cache::forget('lms_jadwal');
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('lms_jadwals')) {
-                $j = \App\Models\LmsJadwal::where('mapel', $data['original_mapel'] ?? ($data['mapel'] ?? ''))
-                    ->where('materi', $data['original_materi'] ?? ($data['materi'] ?? ''))
-                    ->first();
+                $j = null;
+                
+                // Priority 1: Match by ID if provided
+                if (!empty($data['id'])) {
+                    $j = \App\Models\LmsJadwal::find($data['id']);
+                }
+
+                // Priority 2: Match by original_tanggal & original_dosen
+                if (!$j && !empty($data['original_tanggal'])) {
+                    $query = \App\Models\LmsJadwal::where('tanggal', $data['original_tanggal']);
+                    if (!empty($data['original_dosen'])) {
+                        $query->where('dosen', $data['original_dosen']);
+                    }
+                    $j = $query->first();
+                }
+
+                // Priority 3: Match by materi or mapel or new date
+                if (!$j) {
+                    $j = \App\Models\LmsJadwal::where('materi', $data['materi'] ?? '')
+                        ->orWhere('mapel', $data['mapel'] ?? '')
+                        ->orWhere('tanggal', $data['tanggal'] ?? '')
+                        ->first();
+                }
+
                 if ($j) {
+                    $linkMeeting = trim($data['link_zoom'] ?? ($data['link'] ?? $j->link_zoom));
+                    if (!empty($linkMeeting) && !preg_match('~^(?:f|ht)tps?://~i', $linkMeeting)) {
+                        $linkMeeting = 'https://' . $linkMeeting;
+                    }
+
                     $j->update([
                         'tanggal'   => $data['tanggal'] ?? $j->tanggal,
                         'jam'       => $data['jam'] ?? $j->jam,
-                        'mapel'     => $data['mapel'] ?? $j->mapel,
+                        'mapel'     => !empty($data['mapel']) ? $data['mapel'] : $j->mapel,
                         'materi'    => $data['materi'] ?? $j->materi,
                         'dosen'     => $data['dosen'] ?? $j->dosen,
-                        'link_zoom' => $data['link_zoom'] ?? $j->link_zoom,
+                        'link_zoom' => $linkMeeting,
                     ]);
                     return ['status' => 'success', 'message' => 'Jadwal berhasil diperbarui!'];
                 }
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            Log::error("[GoogleSheetService] updateJadwal error: " . $e->getMessage());
+        }
         return ['status' => 'error', 'message' => 'Jadwal tidak ditemukan.'];
     }
 
@@ -572,9 +600,17 @@ class GoogleSheetService
         Cache::forget('lms_jadwal');
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('lms_jadwals')) {
-                \App\Models\LmsJadwal::where('mapel', $data['mapel'] ?? '')
-                    ->where('materi', $data['materi'] ?? '')
-                    ->delete();
+                $query = \App\Models\LmsJadwal::query();
+                if (!empty($data['id'])) {
+                    $query->where('id', $data['id']);
+                } elseif (!empty($data['tanggal']) && !empty($data['dosen'])) {
+                    $query->where('tanggal', $data['tanggal'])
+                          ->where('dosen', $data['dosen']);
+                } else {
+                    $query->where('materi', $data['materi'] ?? '')
+                          ->orWhere('mapel', $data['mapel'] ?? '');
+                }
+                $query->delete();
                 return ['status' => 'success', 'message' => 'Jadwal berhasil dihapus!'];
             }
         } catch (\Exception $e) {}

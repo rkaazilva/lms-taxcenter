@@ -125,7 +125,11 @@ class AdminLmsController extends Controller
 
         $rawJadwal = $this->gs->getJadwal();
         $jadwalList = array_map(function ($item) {
-            return array_merge(is_array($item) ? $item : [], ['parsed_datetime' => $this->parseScheduleDateTime($item)]);
+            $arr = is_array($item) ? $item : [];
+            $link = $arr['link_zoom'] ?? ($arr['link'] ?? '');
+            $arr['link'] = $link;
+            $arr['link_zoom'] = $link;
+            return array_merge($arr, ['parsed_datetime' => $this->parseScheduleDateTime($arr)]);
         }, is_array($rawJadwal) ? $rawJadwal : []);
 
         // Sort by tanggal descending (newest first)
@@ -162,9 +166,9 @@ class AdminLmsController extends Controller
             'blast'   => 'nullable|string',
         ]);
 
-        $linkZoom = trim($request->link);
-        if (!empty($linkZoom) && !preg_match('~^(?:f|ht)tps?://~i', $linkZoom)) {
-            $linkZoom = 'https://' . $linkZoom;
+        $linkMeeting = trim($request->link);
+        if (!empty($linkMeeting) && !preg_match('~^(?:f|ht)tps?://~i', $linkMeeting)) {
+            $linkMeeting = 'https://' . $linkMeeting;
         }
 
         // Simpan ke MySQL Native via GoogleSheetService
@@ -174,8 +178,8 @@ class AdminLmsController extends Controller
             'mapel'     => $request->mapel,
             'materi'    => $request->materi,
             'dosen'     => $request->dosen,
-            'link'      => $linkZoom,
-            'link_zoom' => $linkZoom,
+            'link'      => $linkMeeting,
+            'link_zoom' => $linkMeeting,
             'blast'     => $request->has('blast') ? true : false,
         ]);
 
@@ -201,9 +205,10 @@ class AdminLmsController extends Controller
     public function jadwalUpdate(Request $request)
     {
         $request->validate([
-            'original_tanggal' => 'required|string',
-            'original_jam'     => 'required|string',
-            'original_dosen'   => 'required|string',
+            'id'               => 'nullable|integer',
+            'original_tanggal' => 'nullable|string',
+            'original_jam'     => 'nullable|string',
+            'original_dosen'   => 'nullable|string',
             'tanggal'          => 'required|string',
             'jam'              => 'nullable|string',
             'materi'           => 'required|string',
@@ -211,21 +216,26 @@ class AdminLmsController extends Controller
             'link'             => 'required|string',
         ]);
 
-        $linkZoom = trim($request->link);
-        if (!empty($linkZoom) && !preg_match('~^(?:f|ht)tps?://~i', $linkZoom)) {
-            $linkZoom = 'https://' . $linkZoom;
+        $linkMeeting = trim($request->link);
+        if (!empty($linkMeeting) && !preg_match('~^(?:f|ht)tps?://~i', $linkMeeting)) {
+            $linkMeeting = 'https://' . $linkMeeting;
         }
 
         $result = $this->gs->updateJadwal([
+            'id'               => $request->id,
             'original_tanggal' => $request->original_tanggal,
             'original_jam'     => $request->original_jam,
             'original_dosen'   => $request->original_dosen,
+            'original_mapel'   => $request->original_mapel ?? ($request->mapel ?? ''),
+            'original_materi'  => $request->original_materi ?? ($request->materi ?? ''),
             'tanggal'          => $request->tanggal,
             'jam'              => $request->jam ?? '',
+            'mapel'            => $request->mapel ?? '',
             'materi'           => $request->materi,
             'dosen'            => $request->dosen,
             'moderator'        => '',
-            'link'             => $linkZoom,
+            'link'             => $linkMeeting,
+            'link_zoom'        => $linkMeeting,
             'blast'            => $request->has('blast') ? true : false,
         ]);
 
@@ -250,15 +260,18 @@ class AdminLmsController extends Controller
     public function jadwalDelete(Request $request)
     {
         $request->validate([
-            'tanggal' => 'required|string',
-            'jam'     => 'required|string',
-            'dosen'   => 'required|string',
+            'id'      => 'nullable|integer',
+            'tanggal' => 'nullable|string',
+            'dosen'   => 'nullable|string',
         ]);
 
         $result = $this->gs->deleteJadwal([
+            'id'      => $request->id,
             'tanggal' => $request->tanggal,
-            'jam'     => $request->jam,
+            'jam'     => $request->jam ?? '',
             'dosen'   => $request->dosen,
+            'materi'  => $request->materi ?? '',
+            'mapel'   => $request->mapel ?? '',
         ]);
 
         if ($result['status'] === 'success') {
