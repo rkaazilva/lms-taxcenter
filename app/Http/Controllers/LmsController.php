@@ -356,9 +356,7 @@ class LmsController extends Controller
                 ], 422);
             }
             try {
-                $cleanFileName = time() . '_' . preg_replace('/[^A-Za-z0-9_.-]/', '_', $file->getClientOriginalName());
-                $path = $file->storeAs('submissions', $cleanFileName, 'public');
-                $linkTugas = asset('storage/' . $path);
+                $linkTugas = $this->storePublicFile($file, 'submissions');
             } catch (\Exception $e) {
                 return response()->json([
                     'status'  => 'error',
@@ -451,9 +449,7 @@ class LmsController extends Controller
             if (!$this->isSafeExtension($file->getClientOriginalName())) {
                 return back()->with('error', 'Gagal: Format berkas modul tidak diperbolehkan demi keamanan sistem!');
             }
-            $cleanFileName = time() . '_' . preg_replace('/[^A-Za-z0-9_.-]/', '_', $file->getClientOriginalName());
-            $path = $file->storeAs('materi', $cleanFileName, 'public');
-            $linkModul = asset('storage/' . $path);
+            $linkModul = $this->storePublicFile($file, 'materi');
         }
 
         $result = $this->gs->addMateri([
@@ -498,9 +494,7 @@ class LmsController extends Controller
             if (!$this->isSafeExtension($file->getClientOriginalName())) {
                 return back()->with('error', 'Gagal: Format berkas modul tidak diperbolehkan demi keamanan sistem!');
             }
-            $cleanFileName = time() . '_' . preg_replace('/[^A-Za-z0-9_.-]/', '_', $file->getClientOriginalName());
-            $path = $file->storeAs('materi', $cleanFileName, 'public');
-            $linkModul = asset('storage/' . $path);
+            $linkModul = $this->storePublicFile($file, 'materi');
         }
 
         $result = $this->gs->updateMateri([
@@ -563,9 +557,7 @@ class LmsController extends Controller
             if (!$this->isSafeExtension($file->getClientOriginalName())) {
                 return back()->with('error', 'Gagal: Format berkas soal tidak diperbolehkan demi keamanan sistem!');
             }
-            $cleanFileName = time() . '_' . preg_replace('/[^A-Za-z0-9_.-]/', '_', $file->getClientOriginalName());
-            $path = $file->storeAs('soal', $cleanFileName, 'public');
-            $linkSoal = asset('storage/' . $path);
+            $linkSoal = $this->storePublicFile($file, 'soal');
         }
 
         $deadline = '';
@@ -626,9 +618,7 @@ class LmsController extends Controller
             if (!$this->isSafeExtension($file->getClientOriginalName())) {
                 return back()->with('error', 'Gagal: Format berkas soal tidak diperbolehkan demi keamanan sistem!');
             }
-            $cleanFileName = time() . '_' . preg_replace('/[^A-Za-z0-9_.-]/', '_', $file->getClientOriginalName());
-            $path = $file->storeAs('soal', $cleanFileName, 'public');
-            $linkSoal = asset('storage/' . $path);
+            $linkSoal = $this->storePublicFile($file, 'soal');
         }
 
         $deadline = '';
@@ -1074,6 +1064,36 @@ class LmsController extends Controller
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    /**
+     * Helper aman untuk menyimpan file ke storage & folder public secara langsung.
+     * Mencegah error 404 pada cPanel shared hosting yang tidak mendukung symlink.
+     */
+    private function storePublicFile($file, string $folder): string
+    {
+        $cleanFileName = time() . '_' . preg_replace('/[^A-Za-z0-9_.-]/', '_', $file->getClientOriginalName());
+        
+        // 1. Simpan via Laravel Storage Disk (storage/app/public/{folder})
+        $path = $file->storeAs($folder, $cleanFileName, 'public');
+        
+        // 2. Salin fisik langsung ke public_path("storage/{$folder}")
+        try {
+            $publicDir = public_path("storage/{$folder}");
+            if (!file_exists($publicDir)) {
+                @mkdir($publicDir, 0755, true);
+            }
+            $targetPath = $publicDir . '/' . $cleanFileName;
+            $sourcePath = storage_path("app/public/{$path}");
+            if (file_exists($sourcePath)) {
+                @copy($sourcePath, $targetPath);
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning("[storePublicFile] Copy to public_path failed: " . $e->getMessage());
+        }
+
+        // 3. Kembalikan URL absolut dinamis (otomatis mengikuti domain request saat ini)
+        return url('storage/' . $path);
     }
 }
 

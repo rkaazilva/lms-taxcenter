@@ -184,3 +184,23 @@ Route::get('/run-import-native', function () {
         return "Gagal mengimpor data ke Native DB: " . $e->getMessage();
     }
 });
+
+// ROUTE STORAGE SERVING FALLBACK (Mencegah Error 404 Berkas Modul Materi/Soal/Tugas di cPanel Shared Hosting)
+Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
+    $allowedFolders = ['materi', 'soal', 'submissions', 'profile', 'articles'];
+    if (!in_array($folder, $allowedFolders)) {
+        abort(404);
+    }
+    
+    $filename = basename($filename);
+    $path1 = public_path("storage/{$folder}/{$filename}");
+    $path2 = storage_path("app/public/{$folder}/{$filename}");
+    
+    if (file_exists($path1)) {
+        return response()->file($path1);
+    } elseif (file_exists($path2)) {
+        return response()->file($path2);
+    }
+    
+    abort(404, 'Berkas tidak ditemukan.');
+})->where('filename', '.*');
