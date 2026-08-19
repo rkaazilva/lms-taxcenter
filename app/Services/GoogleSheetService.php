@@ -226,20 +226,27 @@ class GoogleSheetService
     {
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('lms_absensis')) {
+                $emailClean = strtolower(trim($email));
                 \App\Models\LmsAbsensi::create([
-                    'email'     => strtolower(trim($email)),
+                    'email'     => $emailClean,
                     'nama'      => $nama,
                     'mapel'     => $mapel,
                     'metode'    => $metode,
                     'timestamp' => \Carbon\Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
                 Cache::forget('lms_absensi');
+                Cache::forget('lms_absensi_' . md5($emailClean));
 
-                // Optional WA Broadcast
-                $this->sendWaBroadcast("Konfirmasi Kehadiran: Siswa {$nama} ({$email}) telah presensi pada mapel {$mapel} via {$metode}.");
+                // Fast non-blocking WA notification (silently ignored if token empty)
+                try {
+                    $this->sendWaBroadcast("Konfirmasi Kehadiran: Siswa {$nama} ({$emailClean}) telah presensi pada mapel {$mapel} via {$metode}.");
+                } catch (\Throwable $e) {}
+
                 return true;
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            Log::error("[GoogleSheetService] catatAbsen error: " . $e->getMessage());
+        }
 
         return false;
     }
@@ -1038,28 +1045,23 @@ class GoogleSheetService
         $target = env('FONNTE_TARGET');
 
         if (empty($token) || empty($target)) {
-            Log::warning("[GoogleSheetService] sendWaBroadcast aborted: FONNTE_TOKEN or FONNTE_TARGET is empty.");
             return false;
         }
 
         try {
             $response = Http::withHeaders([
                 'Authorization' => $token,
-            ])->timeout(15)->post('https://api.fonnte.com/send', [
+            ])->timeout(2)->post('https://api.fonnte.com/send', [
                 'target' => $target,
                 'message' => $message,
             ]);
 
             if ($response->successful()) {
                 $result = $response->json();
-                Log::info("[GoogleSheetService] sendWaBroadcast response: " . json_encode($result));
                 return isset($result['status']) && $result['status'] == true;
             }
-
-            Log::error("[GoogleSheetService] sendWaBroadcast - HTTP Error {$response->status()}: " . $response->body());
             return false;
-        } catch (\Exception $e) {
-            Log::error("[GoogleSheetService] sendWaBroadcast Exception: " . $e->getMessage());
+        } catch (\Throwable $e) {
             return false;
         }
     }

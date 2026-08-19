@@ -1557,7 +1557,7 @@
         }
     }
 
-    function submitTugasProcess() {
+    async function submitTugasProcess() {
         const fileInput = document.getElementById('inputFileTugas');
         const linkInput = document.getElementById('inputLinkTugas');
         
@@ -1575,60 +1575,12 @@
         btn.disabled = true;
 
         const idTugas = document.getElementById('inputIdTugas').value;
-
-        // Callback sukses kirim tugas
-        const sendPayload = async (payload) => {
-            try {
-                const res = await fetch("{{ route('siswa.api.submit_tugas') }}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify(payload)
-                });
-                
-                const result = await res.json();
-                
-                if (result.status === 'success') {
-                    Swal.fire({
-                        title: 'Tugas Terkirim!',
-                        text: 'Tugas Anda berhasil diserahkan dan tercatat di Sheets.',
-                        icon: 'success',
-                        confirmButtonColor: '#2563eb'
-                    }).then(() => {
-                        closeTugasModal();
-                        
-                        // Reload data
-                        document.getElementById('lmsContent').style.display = 'none';
-                        document.getElementById('lmsLoader').style.display = 'flex';
-                        loadDashboardData();
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Gagal Kirim',
-                        text: result.message || 'Terjadi kesalahan sistem.',
-                        icon: 'error',
-                        confirmButtonColor: '#2563eb'
-                    });
-                }
-            } catch (error) {
-                Swal.fire({
-                    title: 'Time Out / Error',
-                    text: 'Gagal mengirim tugas. Coba lagi dalam beberapa saat.',
-                    icon: 'error',
-                    confirmButtonColor: '#2563eb'
-                });
-            } finally {
-                btn.innerHTML = '<i class="fas fa-cloud-upload-alt mr-2"></i> Kirim Tugas';
-                btn.disabled = false;
-            }
-        };
+        const formData = new FormData();
+        formData.append('id_tugas', idTugas);
+        formData.append('link_tugas', linkInput.value.trim());
 
         if (hasFile) {
             const file = fileInput.files[0];
-            
-            // Validate file extension against blacklist
             const blacklist = ['php', 'phtml', 'php3', 'php4', 'php5', 'html', 'htm', 'js', 'jsp', 'asp', 'aspx', 'sh', 'exe', 'pl', 'cgi', 'htaccess'];
             const fileExt = file.name.split('.').pop().toLowerCase();
             if (blacklist.includes(fileExt)) {
@@ -1638,37 +1590,56 @@
                 return;
             }
             
-            // Limit size ke 30MB
             if (file.size > 30 * 1024 * 1024) {
                 document.getElementById('fileError').innerText = "Ukuran file terlalu besar! Maksimal 30MB.";
                 btn.innerHTML = '<i class="fas fa-cloud-upload-alt mr-2"></i> Kirim Tugas';
                 btn.disabled = false;
                 return;
             }
+            formData.append('file_tugas', file);
+        }
 
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async function() {
-                const base64Data = reader.result.split(',')[1];
-                const payload = {
-                    id_tugas: idTugas,
-                    base64: base64Data,
-                    fileName: file.name,
-                    mimeType: file.type,
-                    link_tugas: linkInput.value.trim()
-                };
-                sendPayload(payload);
-            };
-        } else {
-            // Hanya kirim link saja
-            const payload = {
-                id_tugas: idTugas,
-                base64: "",
-                fileName: "",
-                mimeType: "",
-                link_tugas: linkInput.value.trim()
-            };
-            sendPayload(payload);
+        try {
+            const res = await fetch("{{ route('siswa.api.submit_tugas') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: formData
+            });
+
+            const result = await res.json();
+
+            if (result.status === 'success') {
+                Swal.fire({
+                    title: 'Tugas Terkirim!',
+                    text: 'Tugas Anda berhasil diserahkan dan tersimpan.',
+                    icon: 'success',
+                    confirmButtonColor: '#2563eb'
+                }).then(() => {
+                    closeTugasModal();
+                    document.getElementById('lmsContent').classList.add('hidden');
+                    document.getElementById('lmsLoader').style.display = 'flex';
+                    loadDashboardData();
+                });
+            } else {
+                Swal.fire({
+                    title: 'Gagal Kirim',
+                    text: result.message || 'Terjadi kesalahan sistem.',
+                    icon: 'error',
+                    confirmButtonColor: '#2563eb'
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Gagal mengirim tugas. Coba periksa jaringan Anda.',
+                icon: 'error',
+                confirmButtonColor: '#2563eb'
+            });
+        } finally {
+            btn.innerHTML = '<i class="fas fa-cloud-upload-alt mr-2"></i> Kirim Tugas';
+            btn.disabled = false;
         }
     }
 

@@ -33,6 +33,11 @@ class LmsController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Unauthenticated'], 401);
         }
 
+        // Release PHP session lock immediately so concurrent AJAX requests don't queue
+        if (function_exists('session_write_close')) {
+            session_write_close();
+        }
+
         // Ambil semua data dashboard secara lebih efisien.
         $dashboardData = $this->gs->getDashboardData($email);
         $rawJadwal  = $dashboardData['jadwal'];
@@ -210,6 +215,11 @@ class LmsController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Session tidak valid. Silakan login ulang.'], 401);
         }
 
+        // Fast release session lock so other AJAX requests don't queue
+        if (function_exists('session_write_close')) {
+            session_write_close();
+        }
+
         // BUG-011: Backend duplicate check (per email + mapel + tanggal)
         $todayKey = 'absen_' . md5($email . '_' . $request->mapel . '_' . now()->format('Y-m-d'));
         if (Cache::has($todayKey)) {
@@ -310,15 +320,21 @@ class LmsController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Sesi login berakhir. Silakan login kembali.'], 401);
         }
 
+        // Release PHP session lock immediately
+        if (function_exists('session_write_close')) {
+            session_write_close();
+        }
+
         $request->validate([
             'id_tugas'   => 'required|string',
+            'file_tugas' => 'nullable|file|max:30720', // max 30MB
             'base64'     => 'nullable|string',
             'fileName'   => 'nullable|string',
             'mimeType'   => 'nullable|string',
             'link_tugas' => 'nullable|string',
         ]);
 
-        if (empty($request->base64) && empty($request->link_tugas)) {
+        if (!$request->hasFile('file_tugas') && empty($request->base64) && empty($request->link_tugas)) {
             return response()->json([
                 'status'  => 'error',
                 'message' => 'Harap unggah berkas atau masukkan tautan (link) tugas Anda!'
@@ -330,7 +346,28 @@ class LmsController extends Controller
             $linkTugas = 'https://' . $linkTugas;
         }
 
-        if (!empty($request->base64) && !empty($request->fileName)) {
+        // Option A: Direct multipart file upload (Fastest & Ultra Low Memory)
+        if ($request->hasFile('file_tugas')) {
+            $file = $request->file('file_tugas');
+            if (!$this->isSafeExtension($file->getClientOriginalName())) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Unggahan ditolak. Format file tidak diperbolehkan demi keamanan sistem!'
+                ], 422);
+            }
+            try {
+                $cleanFileName = time() . '_' . preg_replace('/[^A-Za-z0-9_.-]/', '_', $file->getClientOriginalName());
+                $path = $file->storeAs('submissions', $cleanFileName, 'public');
+                $linkTugas = asset('storage/' . $path);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Gagal menyimpan berkas tugas di server: ' . $e->getMessage()
+                ], 500);
+            }
+        }
+        // Option B: Legacy Base64 fallback
+        elseif (!empty($request->base64) && !empty($request->fileName)) {
             if (!$this->isSafeExtension($request->fileName)) {
                 return response()->json([
                     'status'  => 'error',
