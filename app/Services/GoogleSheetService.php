@@ -711,16 +711,34 @@ class GoogleSheetService
         return $this->safeRemember('lms_submissions', $this->getSubmissionsTtl(), function () {
             try {
                 if (\Illuminate\Support\Facades\Schema::hasTable('lms_submissions')) {
+                    $tugasMap = [];
+                    if (\Illuminate\Support\Facades\Schema::hasTable('lms_tugas')) {
+                        $tugasList = \App\Models\LmsTugas::all();
+                        foreach ($tugasList as $t) {
+                            if (!empty($t->id_tugas)) {
+                                $tugasMap[$t->id_tugas] = $t;
+                            }
+                        }
+                    }
+
                     $subs = \App\Models\LmsSubmission::orderBy('id', 'desc')->get();
                     $result = [];
                     foreach ($subs as $s) {
+                        $tObj = $tugasMap[$s->id_tugas] ?? null;
+                        $mapel = $tObj ? ($tObj->mapel ?? '') : ($s->mapel ?? '');
+                        $judulTugas = $tObj ? ($tObj->judul ?? '') : ($s->judul_tugas ?? '');
+                        $linkFile = $s->link_tugas ?? ($s->link_file ?? '');
+
                         $result[] = [
                             'id'           => $s->id,
                             'id_tugas'     => $s->id_tugas,
+                            'mapel'        => $mapel,
+                            'judul_tugas'  => $judulTugas,
                             'email'        => $s->email,
-                            'nama'         => $s->nama_siswa ?? $s->nama ?? '',
-                            'nama_siswa'   => $s->nama_siswa ?? $s->nama ?? '',
-                            'link_tugas'   => $s->link_tugas,
+                            'nama'         => $s->nama_siswa ?? ($s->nama ?? ''),
+                            'nama_siswa'   => $s->nama_siswa ?? ($s->nama ?? ''),
+                            'link_tugas'   => $linkFile,
+                            'link_file'    => $linkFile,
                             'nilai'        => $s->nilai,
                             'feedback'     => $s->feedback,
                             'timestamp'    => $s->submitted_at ?? $s->created_at,

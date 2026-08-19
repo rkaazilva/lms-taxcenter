@@ -53,8 +53,34 @@ class GuruController extends Controller
         // Filter tugas by guru's mapel
         $tugas = $this->filterByMapel($allTugas, $guruMapel, $role);
 
-        // Filter submissions by guru's mapel
-        $submissions = $this->filterByMapel($allSubmissions, $guruMapel, $role);
+        // Filter submissions by guru's mapel & task IDs
+        if (in_array(strtoupper($role), ['ADMIN', 'ADMIN_LMS']) || empty($guruMapel)) {
+            $submissions = is_array($allSubmissions) ? $allSubmissions : [];
+        } else {
+            $guruTugasIds = array_filter(array_column(is_array($tugas) ? $tugas : [], 'id_tugas'));
+            $normalizedGuruMapel = array_map(function($m) {
+                return \App\Services\GoogleSheetService::normalizeMapelName($m);
+            }, (array)$guruMapel);
+
+            $submissions = array_values(array_filter(is_array($allSubmissions) ? $allSubmissions : [], function ($sub) use ($guruMapel, $normalizedGuruMapel, $guruTugasIds) {
+                $idT = $sub['id_tugas'] ?? '';
+                if (!empty($idT) && in_array($idT, $guruTugasIds)) {
+                    return true;
+                }
+                $subMapel = $sub['mapel'] ?? '';
+                if (!empty($subMapel) && in_array($subMapel, $guruMapel)) {
+                    return true;
+                }
+                $normSubMapel = \App\Services\GoogleSheetService::normalizeMapelName($subMapel);
+                if (!empty($normSubMapel) && in_array($normSubMapel, $normalizedGuruMapel)) {
+                    return true;
+                }
+                if (empty($subMapel)) {
+                    return true;
+                }
+                return false;
+            }));
+        }
 
         $namaGuru = session('nama');
         $jadwalKhusus = [];
