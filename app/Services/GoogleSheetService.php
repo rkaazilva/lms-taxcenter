@@ -429,18 +429,44 @@ class GoogleSheetService
         Cache::forget('lms_materi');
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('lms_materis')) {
-                $materi = \App\Models\LmsMateri::find($data['id'] ?? 0);
+                $materi = null;
+
+                // Priority 1: Match by ID if provided
+                if (!empty($data['id'])) {
+                    $materi = \App\Models\LmsMateri::find($data['id']);
+                }
+
+                // Priority 2: Match by original_mapel and original_judul
+                if (!$materi && !empty($data['original_judul'])) {
+                    $query = \App\Models\LmsMateri::where('judul', $data['original_judul']);
+                    if (!empty($data['original_mapel'])) {
+                        $query->where('mapel', $data['original_mapel']);
+                    }
+                    $materi = $query->first();
+                }
+
+                // Priority 3: Match by new mapel + judul fallback
+                if (!$materi && !empty($data['judul'])) {
+                    $query = \App\Models\LmsMateri::where('judul', $data['judul']);
+                    if (!empty($data['mapel'])) {
+                        $query->where('mapel', $data['mapel']);
+                    }
+                    $materi = $query->first();
+                }
+
                 if ($materi) {
                     $judul = $data['judul'] ?? $data['materi'] ?? $materi->judul;
-                    $modul = $data['link_modul'] ?? $data['link_pdf'] ?? $materi->link_modul;
+                    $modul = !empty($data['link_modul']) ? $data['link_modul'] : ($data['link_pdf'] ?? $materi->link_modul);
                     $ket   = $data['keterangan'] ?? $data['deskripsi'] ?? $materi->keterangan;
 
                     $materi->update([
-                        'mapel'        => $data['mapel'] ?? $materi->mapel,
+                        'mapel'        => !empty($data['mapel']) ? $data['mapel'] : $materi->mapel,
                         'judul'        => $judul,
                         'link_modul'   => $modul,
-                        'link_youtube' => $data['link_youtube'] ?? $materi->link_youtube,
+                        'link_youtube' => !empty($data['link_youtube']) ? $data['link_youtube'] : $materi->link_youtube,
                         'keterangan'   => $ket,
+                        'status'       => $data['status'] ?? $materi->status,
+                        'kelas'        => $data['kelas'] ?? $materi->kelas,
                     ]);
                     return ['status' => 'success', 'message' => 'Materi berhasil diperbarui!'];
                 }
@@ -459,14 +485,34 @@ class GoogleSheetService
         Cache::forget('lms_tugas');
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('lms_tugas')) {
-                $tugas = \App\Models\LmsTugas::where('id_tugas', $data['id_tugas'] ?? '')->orWhere('id', $data['id'] ?? 0)->first();
+                $tugas = null;
+
+                // Priority 1: Match by ID if provided
+                if (!empty($data['id'])) {
+                    $tugas = \App\Models\LmsTugas::find($data['id']);
+                }
+
+                // Priority 2: Match by original_id_tugas or id_tugas
+                if (!$tugas && !empty($data['original_id_tugas'])) {
+                    $tugas = \App\Models\LmsTugas::where('id_tugas', $data['original_id_tugas'])->first();
+                }
+
+                if (!$tugas && !empty($data['id_tugas'])) {
+                    $tugas = \App\Models\LmsTugas::where('id_tugas', $data['id_tugas'])->first();
+                }
+
+                if (!$tugas && !empty($data['judul'])) {
+                    $tugas = \App\Models\LmsTugas::where('judul', $data['judul'])->first();
+                }
+
                 if ($tugas) {
                     $tugas->update([
+                        'id_tugas'  => $data['id_tugas'] ?? $tugas->id_tugas,
                         'mapel'     => $data['mapel'] ?? $tugas->mapel,
                         'judul'     => $data['judul'] ?? $tugas->judul,
                         'deskripsi' => $data['deskripsi'] ?? $tugas->deskripsi,
                         'deadline'  => $data['deadline'] ?? $tugas->deadline,
-                        'link_soal' => $data['link_soal'] ?? $tugas->link_soal,
+                        'link_soal' => !empty($data['link_soal']) ? $data['link_soal'] : $tugas->link_soal,
                     ]);
                     return ['status' => 'success', 'message' => 'Tugas berhasil diperbarui!'];
                 }

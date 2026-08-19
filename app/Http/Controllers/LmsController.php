@@ -476,8 +476,9 @@ class LmsController extends Controller
     public function materiUpdate(Request $request)
     {
         $request->validate([
-            'original_mapel' => 'required|string',
-            'original_judul' => 'required|string|max:255',
+            'id'             => 'nullable|integer',
+            'original_mapel' => 'nullable|string',
+            'original_judul' => 'nullable|string|max:255',
             'mapel'          => 'required|string',
             'judul'          => 'required|string|max:255',
             'link_modul'     => 'nullable|string',
@@ -503,8 +504,9 @@ class LmsController extends Controller
         }
 
         $result = $this->gs->updateMateri([
-            'original_mapel' => $request->original_mapel,
-            'original_judul' => $request->original_judul,
+            'id'             => $request->id,
+            'original_mapel' => $request->original_mapel ?? ($request->mapel ?? ''),
+            'original_judul' => $request->original_judul ?? ($request->judul ?? ''),
             'mapel'          => $request->mapel,
             'judul'          => $request->judul,
             'link_modul'     => $linkModul,
@@ -600,7 +602,8 @@ class LmsController extends Controller
     public function tugasUpdate(Request $request)
     {
         $request->validate([
-            'original_id_tugas' => 'required|string|max:50',
+            'id'                => 'nullable|integer',
+            'original_id_tugas' => 'nullable|string|max:50',
             'id_tugas'          => 'required|string|max:50',
             'mapel'             => 'required|string',
             'judul'             => 'required|string|max:255',
@@ -634,7 +637,8 @@ class LmsController extends Controller
         }
 
         $result = $this->gs->updateTugas([
-            'original_id_tugas' => $request->original_id_tugas,
+            'id'                => $request->id,
+            'original_id_tugas' => $request->original_id_tugas ?? ($request->id_tugas ?? ''),
             'id_tugas'          => $request->id_tugas,
             'mapel'             => $request->mapel,
             'judul'             => $request->judul,

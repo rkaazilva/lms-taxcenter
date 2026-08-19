@@ -1030,6 +1030,7 @@
         </div>
         <form id="materiForm" action="{{ route('guru.materi.store') }}" method="POST" enctype="multipart/form-data" onsubmit="showLoadingOverlay(this)" class="p-6 space-y-4 overflow-y-auto flex-1">
             @csrf
+            <input type="hidden" name="id" id="materi_id" value="">
             <input type="hidden" name="original_mapel" id="original_mapel" value="">
             <input type="hidden" name="original_judul" id="original_judul" value="">
             <div>
@@ -1169,6 +1170,7 @@
         </div>
         <form id="tugasForm" action="{{ route('guru.tugas.store') }}" method="POST" enctype="multipart/form-data" onsubmit="showLoadingOverlay(this)" class="p-6 space-y-4 overflow-y-auto flex-1">
             @csrf
+            <input type="hidden" name="id" id="tugas_db_id" value="">
             <input type="hidden" name="original_id_tugas" id="original_id_tugas" value="">
             
             <div>
@@ -1409,6 +1411,8 @@
         form.action = materiStoreUrl;
         document.getElementById('materiModalTitle').innerText = 'Unggah Materi Brevet Baru';
         document.getElementById('materiSubmitButton').innerHTML = '<i class="fas fa-save"></i> Simpan & Unggah Materi';
+        const materiIdEl = document.getElementById('materi_id');
+        if (materiIdEl) materiIdEl.value = '';
         document.getElementById('original_mapel').value = '';
         document.getElementById('original_judul').value = '';
         if (form.link_youtube) {
@@ -1438,6 +1442,8 @@
         form.action = materiUpdateUrl;
         document.getElementById('materiModalTitle').innerText = 'Edit Materi';
         document.getElementById('materiSubmitButton').innerHTML = '<i class="fas fa-save"></i> Perbarui Materi';
+        const materiIdEl = document.getElementById('materi_id');
+        if (materiIdEl) materiIdEl.value = materi.id ?? '';
         document.getElementById('original_mapel').value = materi.mapel ?? '';
         document.getElementById('original_judul').value = materi.judul ?? '';
         form.mapel.value = materi.mapel ?? '';
@@ -1524,6 +1530,8 @@
         form.action = tugasStoreUrl;
         document.getElementById('tugasModalTitle').innerText = 'Buat Tugas Baru';
         document.getElementById('tugasSubmitButton').innerHTML = '<i class="fas fa-save"></i> Buat & Bagikan Tugas';
+        const tugasDbIdEl = document.getElementById('tugas_db_id');
+        if (tugasDbIdEl) tugasDbIdEl.value = '';
         document.getElementById('original_id_tugas').value = '';
         const fileInput = document.getElementById('fileSoalInput');
         if (fileInput) fileInput.value = '';
@@ -1536,6 +1544,8 @@
         form.action = tugasUpdateUrl;
         document.getElementById('tugasModalTitle').innerText = 'Edit Tugas yang Ada';
         document.getElementById('tugasSubmitButton').innerHTML = '<i class="fas fa-save"></i> Perbarui Tugas';
+        const tugasDbIdEl = document.getElementById('tugas_db_id');
+        if (tugasDbIdEl) tugasDbIdEl.value = tugas.id ?? '';
         document.getElementById('original_id_tugas').value = tugas.id_tugas ?? '';
         form.id_tugas.value = tugas.id_tugas ?? '';
         form.mapel.value = tugas.mapel ?? '';
